@@ -23,8 +23,8 @@ class ZopeViewPageTemplateFile(
 
 class ViewPageTemplateFile(property):
 
-    def __init__(self, filename, **kwargs):
-        path = self.get_path_from_prefix(None)
+    def __init__(self, filename, _prefix=None, **kwargs):
+        path = self.get_path_from_prefix(_prefix)
         filename = os.path.join(path, filename)
         self.template = ZopeViewPageTemplateFile(filename)
         property.__init__(self, self.render)
