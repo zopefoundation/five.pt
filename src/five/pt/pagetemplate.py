@@ -49,7 +49,7 @@ class ViewPageTemplateFile(property):
 
         context = aq_inner(view.context)
 
-        def template(**kwargs):
+        def template(*args, **kwargs):
             return self.template.render(
                 view=view,
                 context=context,
@@ -66,5 +66,5 @@ class ViewPageTemplateFile(property):
 
         return template
 
-    def __call__(self):
-        return self.render()
+    def __call__(self, *args, **kwargs):
+        return self.render(*args, **kwargs)
