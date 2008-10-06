@@ -38,7 +38,7 @@ class ViewPageTemplateFile(property):
             path = package_home(_prefix)
         return path
 
-    def render(self, view):
+    def render(self, view, default_namespace=None):
         try:
             root = self.getPhysicalRoot()
         except AttributeError:
@@ -47,10 +47,10 @@ class ViewPageTemplateFile(property):
             except AttributeError:
                 root = None
 
-        context = aq_inner(view.context)
+        context = aq_inner(view.context)        
 
         def template(*args, **kwargs):
-            return self.template.render(
+            namespace = dict(
                 view=view,
                 context=context,
                 request=view.request,
@@ -63,6 +63,9 @@ class ViewPageTemplateFile(property):
                 modules=SecureModuleImporter,
                 views=ViewMapper(context, view.request),
                 options=kwargs)
+            if default_namespace:
+                namespace.update(default_namespace)
+            return self.template.render(**namespace)
 
         return template
 
