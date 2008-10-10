@@ -50,6 +50,8 @@ class ViewPageTemplateFile(property):
         context = aq_inner(view.context)        
 
         def template(*args, **kwargs):
+            # Next is fast so more efficient that IUserPreferedLanguages
+            language = view.request.get('I18N_LANGUAGE', None)
             namespace = dict(
                 view=view,
                 context=context,
@@ -62,6 +64,7 @@ class ViewPageTemplateFile(property):
                 root=root,
                 modules=SecureModuleImporter,
                 views=ViewMapper(context, view.request),
+                target_language=language,
                 options=kwargs)
             if default_namespace:
                 namespace.update(default_namespace)
