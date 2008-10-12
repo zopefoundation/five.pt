@@ -4,39 +4,18 @@ import sys
 from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 
 from Acquisition import aq_inner
-from Acquisition import Implicit
 from Globals import package_home
-from OFS.Traversable import Traversable
 
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
-import z3c.pt.pagetemplate
+from z3c.pt.pagetemplate import PageTemplate, PageTemplateFile
 
 
-class ZopeViewPageTemplateFile(
-    z3c.pt.pagetemplate.PageTemplateFile,
-    Implicit,
-    Traversable):
-
-    default_expression = 'path'
-
-
-class ViewPageTemplateFile(property):
-
-    def __init__(self, filename, _prefix=None, **kwargs):
-        path = self.get_path_from_prefix(_prefix)
-        filename = os.path.join(path, filename)
-        self.template = ZopeViewPageTemplateFile(filename)
+class ViewPageTemplate(property):
+    def __init__(self, body, **kwargs):
+        self.template = PageTemplate(body, **kwargs)
         property.__init__(self, self.render)
 
-    def get_path_from_prefix(self, _prefix):
-        if isinstance(_prefix, str):
-            path = _prefix
-        else:
-            if _prefix is None:
-                _prefix = sys._getframe(2).f_globals
-            path = package_home(_prefix)
-        return path
 
     def render(self, view, default_namespace=None):
         try:
@@ -47,10 +26,10 @@ class ViewPageTemplateFile(property):
             except AttributeError:
                 root = None
 
-        context = aq_inner(view.context)        
+        context = aq_inner(view.context)
 
         def template(*args, **kwargs):
-            # Next is fast so more efficient that IUserPreferedLanguages
+            # Next is faster that IUserPreferedLanguages
             language = view.request.get('I18N_LANGUAGE', None)
             namespace = dict(
                 view=view,
@@ -74,3 +53,21 @@ class ViewPageTemplateFile(property):
 
     def __call__(self, *args, **kwargs):
         return self.render(*args, **kwargs)
+
+
+class ViewPageTemplateFile(ViewPageTemplate):
+
+    def __init__(self, filename, _prefix=None, **kwargs):
+        path = self.get_path_from_prefix(_prefix)
+        filename = os.path.join(path, filename)
+        self.template = PageTemplateFile(filename)
+        property.__init__(self, self.render)
+
+    def get_path_from_prefix(self, _prefix):
+        if isinstance(_prefix, str):
+            path = _prefix
+        else:
+            if _prefix is None:
+                _prefix = sys._getframe(2).f_globals
+            path = package_home(_prefix)
+        return path
