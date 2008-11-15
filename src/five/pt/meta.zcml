@@ -1,0 +1,32 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+  <include package="Products.Five" />
+  
+  <meta:directives namespace="http://namespaces.zope.org/browser">
+
+    <!-- browser pages -->
+
+    <meta:directive
+       name="page"
+       schema="zope.app.publisher.browser.metadirectives.IPageDirective"
+       handler=".zcml.page_directive"
+       />
+
+    <meta:directive
+       name="viewlet"
+       schema="zope.viewlet.metadirectives.IViewletDirective"
+       handler=".zcml.viewlet_directive"
+       />
+    
+    <meta:directive
+       name="viewletManager"
+       schema="zope.viewlet.metadirectives.IViewletManagerDirective"
+       handler=".zcml.viewlet_manager_directive"
+       />
+
+  </meta:directives>
+
+</configure>

@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- Added meta-directives to register browser views, viewlets and
+  viewlet managers using Chameleon templates. [malthe]
+
 - Updated to latest API. [malthe]
 
 - Package structure. [hannosch]

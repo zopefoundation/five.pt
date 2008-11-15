@@ -1,0 +1,135 @@
+Directives
+==========
+
+We'll use a configuration machine to carry out actions; note that when
+actions are executed, the configuration machine is emptied.
+
+  >>> from zope.configuration import config
+  >>> context = config.ConfigurationMachine()
+
+Pages
+-----
+  
+  >>> from five.pt import zcml
+  >>> zcml.page_directive(
+  ...    context, "test1", "zope2.View", None,
+  ...    template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+Verify that page has been registered as a component.
+  
+  >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer),
+  ...     interface.Interface, name="test1")
+
+  >>> factory.index
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+We can base the view on an existing class.
+  
+  >>> class View(object):
+  ...     pass
+
+  >>> zcml.page_directive(
+  ...    context, "test2", "zope2.View", None,
+  ...    class_=View, template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer),
+  ...     interface.Interface, name="test2")
+
+  >>> factory.index
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+  >>> issubclass(factory, View)
+  True
+
+Viewlet managers
+----------------
+
+  >>> zcml.viewlet_manager_directive(
+  ...    context, "test1", "zope2.View",
+  ...    template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+Verify that page has been registered as a component.
+  
+  >>> from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+  >>> from zope.publisher.interfaces.browser import IBrowserView
+  >>> from zope.viewlet.interfaces import IViewletManager
+  
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer, IBrowserView),
+  ...     IViewletManager, name="test1")
+
+  >>> factory.template
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+We can base the viewlet manager on an existing class.
+
+  >>> class ViewletManager(object):
+  ...     pass
+
+  >>> zcml.viewlet_manager_directive(
+  ...    context, "test2", "zope2.View",
+  ...    class_=ViewletManager, template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+Verify that page has been registered as a component.
+  
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer, IBrowserView),
+  ...     IViewletManager, name="test2")
+
+  >>> factory.template
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+  >>> issubclass(factory, ViewletManager)
+  True
+
+Viewlets
+--------
+
+  >>> zcml.viewlet_directive(
+  ...    context, "test1", "zope2.View",
+  ...    template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+Verify that page has been registered as a component.
+  
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer, IBrowserView, IViewletManager),
+  ...     interface.Interface, name="test1")
+
+  >>> factory.index
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+We can base the viewlet on an existing class.
+
+  >>> class Viewlet(object):
+  ...     pass
+
+  >>> zcml.viewlet_directive(
+  ...    context, "test2", "zope2.View",
+  ...    class_=Viewlet, template=os.path.join(path, "test.pt"))
+  
+  >>> context.execute_actions()
+
+Verify that page has been registered as a component.
+  
+  >>> factory = component.getSiteManager().adapters.lookup(
+  ...     (interface.Interface, IDefaultBrowserLayer, IBrowserView, IViewletManager),
+  ...     interface.Interface, name="test2")
+
+  >>> factory.index
+  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+
+  >>> issubclass(factory, Viewlet)
+  True
