@@ -5,35 +5,28 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 
 from Acquisition import aq_get
 from Acquisition import aq_inner
-from Globals import package_home
 
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
-from z3c.pt.pagetemplate import PageTemplate, PageTemplateFile
+from z3c.pt import pagetemplate
 
-
-class ViewPageTemplate(property):
-    def __init__(self, body, **kwargs):
-        self.template = PageTemplate(body, **kwargs)
-        property.__init__(self, self.render)
-
-
-    def render(self, view, default_namespace=None):
+class ViewPageTemplate(pagetemplate.ViewPageTemplate):
+    def bind(self, view, request=None, macro=None, global_scope=True):
         context = aq_inner(view.context)
         request = view.request
+        
+        # locate physical root
+        method = aq_get(context, 'getPhysicalRoot', None)
+        if method is not None:
+            root = method()
+        else:
+            root = None
 
-        # get the root
-        root = None
-        meth = aq_get(context, 'getPhysicalRoot', None)
-        if meth is not None:
-            root = meth()
-
-        def template(*args, **kwargs):
-            namespace = dict(
+        def render(**kwargs):
+            parameters = dict(
                 view=view,
                 context=context,
                 request=request,
-                _context=request,
                 template=self,
                 here=context,
                 container=context,
@@ -42,29 +35,15 @@ class ViewPageTemplate(property):
                 modules=SecureModuleImporter,
                 views=ViewMapper(context, request),
                 options=kwargs)
-            if default_namespace:
-                namespace.update(default_namespace)
-            return self.template.render(**namespace)
 
-        return template
+            if macro is None:
+                return self.template.render(**parameters)
+            else:
+                return self.template.render_macro(
+                    macro, global_scope=global_scope, parameters=parameters)
+            
+        return render
 
-    def __call__(self, *args, **kwargs):
-        return self.render(*args, **kwargs)
-
-
-class ViewPageTemplateFile(ViewPageTemplate):
-
-    def __init__(self, filename, _prefix=None, **kwargs):
-        path = self.get_path_from_prefix(_prefix)
-        filename = os.path.join(path, filename)
-        self.template = PageTemplateFile(filename)
-        property.__init__(self, self.render)
-
-    def get_path_from_prefix(self, _prefix):
-        if isinstance(_prefix, str):
-            path = _prefix
-        else:
-            if _prefix is None:
-                _prefix = sys._getframe(2).f_globals
-            path = package_home(_prefix)
-        return path
+class ViewPageTemplateFile(ViewPageTemplate, pagetemplate.ViewPageTemplateFile):
+    """If ``filename`` is a relative path, the module path of the
+    class where the instance is used to get an absolute path."""

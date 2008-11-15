@@ -1,8 +1,9 @@
 Changelog
 =========
 
-0.1
----
+HEAD
+----
 
-- Package structure.
-  [hannosch]
+- Updated to latest API. [malthe]
+
+- Package structure. [hannosch]

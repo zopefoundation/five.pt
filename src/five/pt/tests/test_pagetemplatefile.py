@@ -5,14 +5,10 @@ from Testing.ZopeTestCase import ZopeTestCase
 
 from five.pt.pagetemplate import ViewPageTemplateFile
 
-
 class SimpleView(BrowserView):
-
     index = ViewPageTemplateFile('simple.pt')
 
-
 class LocalsView(BrowserView):
-
     def available(self):
         return 'yes'
 
@@ -21,14 +17,10 @@ class LocalsView(BrowserView):
 
     index = ViewPageTemplateFile('locals.pt')
 
-
 class OptionsView(BrowserView):
-
     index = ViewPageTemplateFile('options.pt')
 
-
 class TestPageTemplateFile(ZopeTestCase):
-
     def afterSetUp(self):
         from Products.Five import zcml
         import Products.Five
