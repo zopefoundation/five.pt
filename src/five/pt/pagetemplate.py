@@ -3,6 +3,7 @@ import sys
 
 from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 
+from Acquisition import aq_get
 from Acquisition import aq_inner
 from Globals import package_home
 
@@ -18,32 +19,28 @@ class ViewPageTemplate(property):
 
 
     def render(self, view, default_namespace=None):
-        try:
-            root = self.getPhysicalRoot()
-        except AttributeError:
-            try:
-                root = view.context.getPhysicalRoot()
-            except AttributeError:
-                root = None
-
         context = aq_inner(view.context)
+        request = view.request
+
+        # get the root
+        root = None
+        meth = aq_get(context, 'getPhysicalRoot', None)
+        if meth is not None:
+            root = meth()
 
         def template(*args, **kwargs):
-            # Next is faster that IUserPreferedLanguages
-            language = view.request.get('I18N_LANGUAGE', None)
             namespace = dict(
                 view=view,
                 context=context,
-                request=view.request,
-                _context=view.request,
+                request=request,
+                _context=request,
                 template=self,
                 here=context,
                 container=context,
                 nothing=None,
                 root=root,
                 modules=SecureModuleImporter,
-                views=ViewMapper(context, view.request),
-                target_language=language,
+                views=ViewMapper(context, request),
                 options=kwargs)
             if default_namespace:
                 namespace.update(default_namespace)
