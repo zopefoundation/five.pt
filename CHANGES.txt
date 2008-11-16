@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- Added monkey-patches to replace template engine for module-level
+  view page template instances. [malthe]
+
 - Made `EContext` class more robust. [malthe]
 
 - Register custom file-system page template class for use with CMF

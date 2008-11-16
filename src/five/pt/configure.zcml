@@ -1,7 +1,9 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
   <include package="five.pt" file="meta.zcml" />
+
   <include package="five.pt.cmf" />
+  <include package="five.pt.patches" />
   
   <include package="z3c.pt" />
 
