@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- Added call-support for old-style classes in path
+  expressions. [malthe]
+
 - Added monkey-patches to replace template engine for module-level
   view page template instances. [malthe]
 

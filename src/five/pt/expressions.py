@@ -35,10 +35,13 @@ class FiveTraverser(object):
                         base = traversePathElement(
                             base, name, path_items[i:], request=request)
 
-        if call and getattr(base, '__call__', _marker) is not _marker:
+        if call is False:
+            return base
+        
+        if getattr(base, '__call__', _marker) is not _marker or callable(base):
             # here's where we're different from the standard path
             # traverser
-            return render(base, ob)
+            base = render(base, ob)
 
         return base
 
