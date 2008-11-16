@@ -106,7 +106,7 @@ class FSControllerPageTemplate(FSControllerBase, FSPageTemplate, BaseCPT):
         return self._baseReadMetadata()
 
     def __call__(self, *args, **kwargs):
-        return self._call(FSControllerPageTemplate.__call__, *args, **kwargs)
+        return self._call(FSPageTemplate.__call__, *args, **kwargs)
 
 Globals.InitializeClass(FSPageTemplate)
 Globals.InitializeClass(FSControllerPageTemplate)
