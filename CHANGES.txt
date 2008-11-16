@@ -4,6 +4,8 @@ Changelog
 HEAD
 ----
 
+- Made `EContext` class more robust. [malthe]
+
 - Register custom file-system page template class for use with CMF
   form controllers. [malthe]
 

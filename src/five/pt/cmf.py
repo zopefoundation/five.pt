@@ -19,20 +19,30 @@ from pagetemplate import FiveTemplateFile
 _marker = object()
 
 class EContext(object):
-    vars = None
+    """This class emulates the `econtext` variable scope dictionary of
+    ZPT; it uses `sys._getframe` to acquire the variable and adds
+    required methods."""
     
-    def setLocal(self, name, value):
-        if self.vars is None:
+    _scope = None
+
+    @property
+    def vars(self):
+        if self._scope is None:
             frame = sys._getframe()
-            vars = _marker
-            while vars is _marker and frame is not None:
-                vars = frame.f_locals.get('_scope', _marker)
+            scope = _marker
+            while scope is _marker and frame is not None:
+                scope = frame.f_locals.get('_scope', _marker)
                 frame = frame.f_back
             if vars is _marker:
                 raise RuntimeError, 'Context not found'
-            self.vars = vars
+            self._scope = scope
+        return self._scope
+        
+    def setLocal(self, name, value):
         self.vars[name] = value
 
+    setGlobal = setLocal
+    
 class CMFTemplateFile(FiveTemplateFile):
     @property
     def utility_builtins(self):
