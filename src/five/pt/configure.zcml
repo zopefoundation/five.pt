@@ -1,5 +1,16 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
+  <include package="five.pt" file="meta.zcml" />
+  <include package="five.pt.cmf" />
+  
   <include package="z3c.pt" />
+
+  <utility
+     name="path"
+     component=".expressions.path_translator" />
+
+  <utility
+     name="exists"
+     component=".expressions.exists_translator" />
 
 </configure>

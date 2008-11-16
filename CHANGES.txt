@@ -4,6 +4,12 @@ Changelog
 HEAD
 ----
 
+- Register custom file-system page template class for use with CMF
+  form controllers. [malthe]
+
+- Register custom file-system page template class for use with CMF
+  directory views. [malthe]
+
 - Added meta-directives to register browser views, viewlets and
   viewlet managers using Chameleon templates. [malthe]
 
