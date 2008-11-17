@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- Added ``path`` and ``exists`` functions to skin template
+  namespace. [malthe]
+
 - Added call-support for old-style classes in path
   expressions. [malthe]
 

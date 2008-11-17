@@ -1,4 +1,3 @@
-import sys
 import Globals
 
 from Products.CMFCore.FSObject import FSObject
@@ -15,34 +14,10 @@ from RestrictedPython import Utilities
 
 from pagetemplate import PageTemplateFile
 from pagetemplate import FiveTemplateFile
+from pagetemplate import EContext
 
 _marker = object()
 
-class EContext(object):
-    """This class emulates the `econtext` variable scope dictionary of
-    ZPT; it uses `sys._getframe` to acquire the variable and adds
-    required methods."""
-    
-    _scope = None
-
-    @property
-    def vars(self):
-        if self._scope is None:
-            frame = sys._getframe()
-            scope = _marker
-            while scope is _marker and frame is not None:
-                scope = frame.f_locals.get('_scope', _marker)
-                frame = frame.f_back
-            if vars is _marker:
-                raise RuntimeError, 'Context not found'
-            self._scope = scope
-        return self._scope
-        
-    def setLocal(self, name, value):
-        self.vars[name] = value
-
-    setGlobal = setLocal
-    
 class CMFTemplateFile(FiveTemplateFile):
     @property
     def utility_builtins(self):
