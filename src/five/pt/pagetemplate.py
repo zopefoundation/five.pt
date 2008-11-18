@@ -112,7 +112,7 @@ class BaseTemplateFile(pagetemplate.BaseTemplateFile):
         return super(BaseTemplateFile, self).render_macro(
             macro, global_scope=global_scope, parameters=context)
 
-    def _pt_get_context(self, instance, request, **kwargs):
+    def _pt_get_context(self, instance, request, kwargs={}):
         if instance is None:
             namespace = {}
         else:
@@ -137,7 +137,7 @@ class BaseTemplateFile(pagetemplate.BaseTemplateFile):
         return namespace
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
-    def _pt_get_context(self, view, request, **kwargs):
+    def _pt_get_context(self, view, request, kwargs):
         if view is None:
             namespace = {}
         else:
