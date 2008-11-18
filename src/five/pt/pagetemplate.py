@@ -97,88 +97,70 @@ class EContext(object):
         self.vars[name] = value
 
     setGlobal = setLocal
-        
-class FiveTemplateFile(pagetemplate.PageTemplateFile.template_class):
+
+class BaseTemplateFile(pagetemplate.BaseTemplateFile):
+    """Zope 2-compatible page template class."""
+    
     utility_builtins = {}
 
-    def prepare_builtins(self, kwargs):
-        for key, value in self.utility_builtins.items():
-            kwargs.setdefault(key, value)
-
     def render_macro(self, macro, global_scope=False, parameters=None):
-        if parameters is None:
-            parameters = {}
-        self.prepare_builtins(parameters)
-        return super(FiveTemplateFile, self).render_macro(
-            macro, global_scope=global_scope, parameters=parameters)
+        context = self._pt_get_context(None, None)
 
-class PageTemplateFile(pagetemplate.PageTemplateFile):
-    template_class = FiveTemplateFile
-    
-    def bind(self, parent, macro=None, global_scope=True):
-        context = aq_parent(parent)
-        request = aq_get(parent, 'REQUEST')
-        root = get_physical_root(context)
+        if parameters is not None:
+            context.update(parameters)
+        
+        return super(BaseTemplateFile, self).render_macro(
+            macro, global_scope=global_scope, parameters=context)
 
-        template = self.template
-
-        def render(**kwargs):
-            parameters = dict(
+    def _pt_get_context(self, instance, request, **kwargs):
+        if instance is None:
+            namespace = {}
+        else:
+            context = aq_parent(instance)
+            namespace = dict(
                 context=context,
-                request=request,
-                template=parent,
+                request=request or aq_get(instance, 'REQUEST'),
+                template=self,
                 here=context,
                 container=context,
                 nothing=None,
                 path=evaluate_path,
                 exists=evaluate_exists,
-                root=root,
+                root=get_physical_root(context),
                 user=getSecurityManager().getUser(),
                 modules=SecureModuleImporter,
                 options=kwargs)
 
-            template.prepare_builtins(parameters)
-            
-            if macro is None:
-                return template.render(**parameters)
-            else:
-                return template.render_macro(
-                    macro, global_scope=global_scope, parameters=parameters)
-            
-        return render
+        for name, value in self.utility_builtins.items():
+            namespace.setdefault(name, value)
 
-    def __call__(self, parent, **kwargs):
-        template = self.bind(parent)
-        return template(**kwargs)
+        return namespace
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
-    def bind(self, view, request=None, macro=None, global_scope=True):
-        context = aq_inner(view.context)
-        request = view.request
-        root = get_physical_root(context)
-
-        def render(**kwargs):
-            parameters = dict(
-                view=view,
+    def _pt_get_context(self, view, request, **kwargs):
+        if view is None:
+            namespace = {}
+        else:
+            context = aq_inner(view.context)
+            request = request or view.request
+            namespace = dict(
                 context=context,
                 request=request,
+                view=view,
                 template=self,
                 here=context,
                 container=context,
                 nothing=None,
-                root=root,
+                path=evaluate_path,
+                exists=evaluate_exists,
+                root=get_physical_root(context),
+                user=getSecurityManager().getUser(),
                 modules=SecureModuleImporter,
                 views=ViewMapper(context, request),
                 options=kwargs)
 
-            if macro is None:
-                return self.template.render(**parameters)
-            else:
-                return self.template.render_macro(
-                    macro, global_scope=global_scope, parameters=parameters)
-            
-        return render
-
+        return namespace
+    
 class ViewPageTemplateFile(ViewPageTemplate, pagetemplate.ViewPageTemplateFile):
     """If ``filename`` is a relative path, the module path of the
     class where the instance is used to get an absolute path."""

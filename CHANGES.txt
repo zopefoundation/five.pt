@@ -4,6 +4,8 @@ Changelog
 HEAD
 ----
 
+- Simplified template class inheritance. [malthe]
+
 - Added ``path`` and ``exists`` functions to skin template
   namespace. [malthe]
 

@@ -25,7 +25,7 @@ Verify that page has been registered as a component.
   ...     interface.Interface, name="test1")
 
   >>> factory.index
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
 We can base the view on an existing class.
   
@@ -43,7 +43,7 @@ We can base the view on an existing class.
   ...     interface.Interface, name="test2")
 
   >>> factory.index
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
   >>> issubclass(factory, View)
   True
@@ -68,7 +68,7 @@ Verify that page has been registered as a component.
   ...     IViewletManager, name="test1")
 
   >>> factory.template
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
 We can base the viewlet manager on an existing class.
 
@@ -88,7 +88,7 @@ Verify that page has been registered as a component.
   ...     IViewletManager, name="test2")
 
   >>> factory.template
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
   >>> issubclass(factory, ViewletManager)
   True
@@ -109,7 +109,7 @@ Verify that page has been registered as a component.
   ...     interface.Interface, name="test1")
 
   >>> factory.index
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
 We can base the viewlet on an existing class.
 
@@ -129,7 +129,7 @@ Verify that page has been registered as a component.
   ...     interface.Interface, name="test2")
 
   >>> factory.index
-  <five.pt.pagetemplate.ViewPageTemplateFile object at ...>
+  <five.pt.pagetemplate.BoundViewPageTemplateFile '.../test.pt'>
 
   >>> issubclass(factory, Viewlet)
   True
