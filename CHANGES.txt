@@ -4,6 +4,11 @@ Changelog
 HEAD
 ----
 
+five.pt 0.1 (released 11/19/2008)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Initial release.
+
 - Simplified template class inheritance. [malthe]
 
 - Added ``path`` and ``exists`` functions to skin template

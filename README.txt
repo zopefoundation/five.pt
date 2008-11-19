@@ -1,23 +1,33 @@
 Overview
 ========
 
-The five.pt package brings the z3c.pt package into the Zope 2 world,
-using Zope 2 conventions.
+The five.pt package brings the Chameleon template engine to Zope
+2. It's a drop-in replacement, providing bridges to the most common
+API.
 
-You can use z3c.pt out of the box with Zope 2 as well.
+Support for CMF skin templates, browser pages, viewlets and viewlet
+managers is included.
 
-Use
-===
+Usage
+-----
 
-It's very easy. To define a view which use a five.pt template::
+To enable Chameleon, simply include the ZCML configuration::
+
+  <include package="five.pt" file="meta.zcml" />
+  <include package="five.pt" />
+
+Tempates may be instantiated directly. Here's an example of a browser
+view which uses a view page template::
 
   from Products.Five import BrowserView
   from five.pt.pagetemplate import ViewPageTemplateFile
 
   class SimpleView(BrowserView):
-
       index = ViewPageTemplateFile('simple.pt')
 
+Other template classes are available, see the ``pagetemplate``
+module.
 
-``ViewPageTemplate`` is defined as well and takes a string as template
-code. For more information, please refer to z3c.pt documentation.
+For general information about Chameleon, see
+http://chameleon.repoze.org/.
+
