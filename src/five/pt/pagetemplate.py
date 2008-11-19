@@ -52,7 +52,13 @@ def evaluate_expression(pragma, expr):
         _expr_cache[key] = symbol_mapping, parts, source
 
     # acquire template locals and update with symbol mapping
-    _locals = EContext().locals
+    frame = sys._getframe()
+    while frame.f_locals.get('econtext', _marker) is _marker:
+        frame = frame.f_back
+        if frame is None:
+            raise RuntimeError, "Can't locate template frame."
+
+    _locals = frame.f_locals
     _locals.update(symbol_mapping)    
 
     # execute code and return evaluation
@@ -64,39 +70,6 @@ def evaluate_path(expr):
 
 def evaluate_exists(expr):
     return evaluate_expression('exists', expr)
-
-class EContext(object):
-    """This class emulates the `econtext` variable scope dictionary of
-    ZPT; it uses `sys._getframe` to acquire the variable and adds
-    required methods."""
-    
-    _scope = None
-    _locals = None
-
-    @property
-    def locals(self):
-        self.vars; return self._locals
-        
-    @property
-    def vars(self):
-        if self._scope is None:
-            frame = sys._getframe()
-            scope = _marker
-            while frame is not None:
-                scope = frame.f_locals.get('_scope', _marker)
-                if scope is not _marker:
-                    self._locals = frame.f_locals
-                    break
-                frame = frame.f_back
-            else:
-                raise RuntimeError, "Can't locate variable scope."
-            self._scope = scope
-        return self._scope
-        
-    def setLocal(self, name, value):
-        self.vars[name] = value
-
-    setGlobal = setLocal
 
 class BaseTemplateFile(pagetemplate.BaseTemplateFile):
     """Zope 2-compatible page template class."""

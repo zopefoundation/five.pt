@@ -13,7 +13,6 @@ from AccessControl import ClassSecurityInfo
 from RestrictedPython import Utilities
 
 from pagetemplate import BaseTemplateFile
-from pagetemplate import EContext
 
 class FSPageTemplate(BaseTemplateFile, FSObject, Script):
     meta_type = 'Filesystem Page Template'
@@ -23,6 +22,8 @@ class FSPageTemplate(BaseTemplateFile, FSObject, Script):
 
     _default_bindings = {'name_subpath': 'traverse_subpath'}
 
+    utility_builtins = Utilities.utility_builtins
+    
     def __init__(self, id, filepath, fullname=None, properties=None):
         FSObject.__init__(self, id, filepath, fullname, properties)
         self.ZBindings_edit(self._default_bindings)
@@ -37,15 +38,7 @@ class FSPageTemplate(BaseTemplateFile, FSObject, Script):
 
     def __call__(self, *args, **kwargs):
         kwargs['args'] = args
-        return BaseTemplateFile.__call__(self, self, **kwargs)
-
-    @property
-    def utility_builtins(self):
-        builtins = dict(
-            econtext=EContext())
-        builtins.update(        
-            Utilities.utility_builtins)
-        return builtins
+        return BaseTemplateFile.__call__(self, self, **kwargs)    
     
 class FSControllerPageTemplate(FSPageTemplate, FSControllerBase, BaseCPT):
     def __init__(self, id, filepath, fullname=None, properties=None):
