@@ -11,7 +11,20 @@ Chameleon template instance, transparent to the calling class.
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
      ZopeViewPageTemplateFile
 
-from Products.Five.browser.pagetemplatefile import BoundPageTemplate
+try:
+    from Products.Five.browser.pagetemplatefile import BoundPageTemplate
+except ImportError:
+    from zope.app.pagetemplate.viewpagetemplatefile import BoundPageTemplate
+    import Acquisition
+    
+    class BoundPageTemplate(BoundPageTemplate, Acquisition.Implicit):
+        """Emulate a class implementing Acquisition.interfaces.IAcquirer and
+        IAcquisitionWrapper.
+        """
+
+        __parent__ = property(lambda self: self.im_self)
+        
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
      FiveViewPageTemplateFile
      

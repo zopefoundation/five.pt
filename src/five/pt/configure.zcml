@@ -15,4 +15,8 @@
      name="exists"
      component=".expressions.exists_translator" />
 
+  <utility
+     name="provider"
+     component=".expressions.provider_translator" />
+
 </configure>

@@ -39,6 +39,10 @@ class FSPageTemplate(BaseTemplateFile, FSObject, Script):
     def __call__(self, *args, **kwargs):
         kwargs['args'] = args
         return BaseTemplateFile.__call__(self, self, **kwargs)    
+
+    @property
+    def func_code(self):
+        return self.render.func_code    
     
 class FSControllerPageTemplate(FSPageTemplate, FSControllerBase, BaseCPT):
     def __init__(self, id, filepath, fullname=None, properties=None):

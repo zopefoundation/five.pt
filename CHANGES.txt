@@ -4,6 +4,8 @@ Changelog
 HEAD
 ----
 
+- Compatibility changes to support Zope 2.10. [malthe]
+
 five.pt 0.1 (released 11/19/2008)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
