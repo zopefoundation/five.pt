@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
-version = '0.1'
+version = '0.2'
 
 setup(name='five.pt',
       version=version,
-      description="Five bridges and patches to use Chameleon with Zope 2 and CMF.",
+      description="Five bridges and patches to use Chameleon with Zope 2.",
       long_description=open("README.txt").read() + open("CHANGES.txt").read(),
       classifiers=[
         "Framework :: Zope2",
