@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- From Zope 2.12 onwards, do not acquisition-wrap content
+  provider. [malthe]
+
 - Split out CMF-related code to separate package. [malthe]
 
 - Compatibility changes to support Zope 2.10. [malthe]

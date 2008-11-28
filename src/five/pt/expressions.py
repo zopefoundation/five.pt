@@ -15,6 +15,12 @@ from Products.PageTemplates.Expressions import render
 
 _marker = object()
 
+try:
+    import Products.Five.browser.providerexpression
+    AQ_WRAP_CP = True
+except ImportError:
+    AQ_WRAP_CP = False
+    
 class FiveTraverser(object):
     def __call__(self, base, request, call, *path_items):
         """See ``zope.app.pagetemplate.engine``."""
@@ -68,7 +74,7 @@ class FiveContentProviderTraverser(object):
         if cp is None:
             raise ContentProviderLookupError(name)
 
-        if getattr(cp, '__of__', None) is not None:
+        if AQ_WRAP_CP and getattr(cp, '__of__', None) is not None:
             cp = cp.__of__(context)
 
         cp.update()
