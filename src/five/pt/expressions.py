@@ -22,11 +22,9 @@ except ImportError:
     AQ_WRAP_CP = False
     
 class FiveTraverser(object):
-    def __call__(self, base, request, call, *path_items):
+    def __call__(self, base, scope, call, *path_items):
         """See ``zope.app.pagetemplate.engine``."""
 
-        ob = base
-        
         length = len(path_items)
         if length:
             i = 0
@@ -43,7 +41,7 @@ class FiveTraverser(object):
                         base = base[name]
                     else:
                         base = traversePathElement(
-                            base, name, path_items[i:], request=request)
+                            base, name, path_items[i:], request=scope['request'])
 
         if call is False:
             return base
@@ -51,12 +49,13 @@ class FiveTraverser(object):
         if getattr(base, '__call__', _marker) is not _marker or callable(base):
             # here's where we're different from the standard path
             # traverser
-            base = render(base, ob)
+            base = render(base, scope)
 
         return base
 
 class PathTranslator(PathTranslator):
     path_traverse = FiveTraverser()
+    scope = 'locals()'
 
 class FiveExistsTraverser(ZopeExistsTraverser):
     exceptions = AttributeError, LookupError, TypeError, \

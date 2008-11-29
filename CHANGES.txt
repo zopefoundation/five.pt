@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+- Adjusted the path expression to provide the full namespace to the render
+  function and not just the request. This matches Zope2 behavior. [hannosch]
+
 five.pt 0.2 (released 11/29/2008)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
