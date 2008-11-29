@@ -4,6 +4,9 @@ Changelog
 HEAD
 ----
 
+five.pt 0.2 (released 11/29/2008)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - From Zope 2.12 onwards, do not acquisition-wrap content
   provider. [malthe]
 
