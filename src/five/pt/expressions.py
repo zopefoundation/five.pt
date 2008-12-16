@@ -4,6 +4,7 @@ from z3c.pt.expressions import ZopeExistsTraverser
 from z3c.pt.expressions import ProviderTranslator
 
 from zExceptions import NotFound, Unauthorized
+from OFS.interfaces import ITraversable
 
 from zope import component
 from zope.traversing.adapters import traversePathElement
@@ -39,6 +40,8 @@ class FiveTraverser(object):
                     # special-case dicts for performance reasons
                     if isinstance(base, dict):
                         base = base[name]
+                    elif ITraversable.providedBy(base):
+                        base = base.restrictedTraverse(name)
                     else:
                         base = traversePathElement(
                             base, name, path_items[i:], request=scope['request'])

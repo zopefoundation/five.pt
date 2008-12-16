@@ -1,8 +1,10 @@
 Changelog
 =========
 
-HEAD
-----
+In next release
+
+- Use bobo traversal if ``OFS.interfaces.ITraversable`` interface is
+  provided. [malthe]
 
 - Adjusted the path expression to provide the full namespace to the render
   function and not just the request. This matches Zope2 behavior. [hannosch]
