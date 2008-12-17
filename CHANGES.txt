@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release
+five.pt 0.3 (released 12/17/2008)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Use bobo traversal if ``OFS.interfaces.ITraversable`` interface is
   provided. [malthe]
