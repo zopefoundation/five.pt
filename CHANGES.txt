@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next version
+
+- Moved evaluate_path and evaluate_exists over to ``z3c.pt``, adding
+  support for global ``path()`` and ``exists()`` functions for use in
+  ``python:`` expressions to it (LP #317967). [sidnei]
+
 five.pt 0.3 (released 12/17/2008)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
