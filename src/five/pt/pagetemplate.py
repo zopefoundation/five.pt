@@ -19,7 +19,7 @@ def get_physical_root(context):
     if method is not None:
         return method()
 
-class BaseTemplateFile(pagetemplate.BaseTemplateFile):
+class BaseTemplate(pagetemplate.BaseTemplate):
     """Zope 2-compatible page template class."""
     
     utility_builtins = {}
@@ -29,8 +29,8 @@ class BaseTemplateFile(pagetemplate.BaseTemplateFile):
 
         if parameters is not None:
             context.update(parameters)
-        
-        return super(BaseTemplateFile, self).render_macro(
+
+        return super(BaseTemplate, self).render_macro(
             macro, global_scope=global_scope, parameters=context)
 
     def _pt_get_context(self, instance, request, kwargs={}):
@@ -56,6 +56,9 @@ class BaseTemplateFile(pagetemplate.BaseTemplateFile):
             namespace.setdefault(name, value)
 
         return namespace
+
+class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
+    """Zope 2-compatible page template file class."""
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
     def _pt_get_context(self, view, request, kwargs):
