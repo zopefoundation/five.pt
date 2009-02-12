@@ -11,6 +11,8 @@ Chameleon template instance, transparent to the calling class.
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
      ZopeViewPageTemplateFile
 
+from Acquisition import aq_base
+
 try:
     from Products.Five.browser.pagetemplatefile import BoundPageTemplate
 except ImportError:
@@ -23,7 +25,15 @@ except ImportError:
         """
 
         __parent__ = property(lambda self: self.im_self)
-        
+
+        def __call__(self, *args, **kw):
+            if self.im_self is None:
+                im_self, args = args[0], args[1:]
+            else:
+                im_self = aq_base(self.im_self)
+                im_self = im_self.__of__(im_self.context)
+
+            return self.im_func(im_self, *args, **kw)
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
      FiveViewPageTemplateFile
@@ -36,6 +46,7 @@ def get_bound_template(self, instance, type):
     template = getattr(self, '_template', _marker)
     if template is _marker:
         self._template = template = ViewPageTemplateFile(self.filename)
+
     return BoundPageTemplate(template, instance)
 
 FiveViewPageTemplateFile.__get__ = get_bound_template
