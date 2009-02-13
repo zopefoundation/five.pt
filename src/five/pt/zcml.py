@@ -1,6 +1,8 @@
 import sys
 
 from zope.interface import classImplements
+from zope.configuration.config import ConfigurationMachine
+from zope.component import zcml
 from zope.viewlet.interfaces import IViewletManager
 
 from Products.Five.viewlet import viewlet
@@ -43,7 +45,7 @@ def SimpleViewletClass(src, offering=None, bases=(), attributes=None, name=u''):
 
     return class_
 
-def ViewletManager(name, interface, template=None, bases=()):
+def ViewletManager2(name, interface, template=None, bases=()):
     attrs = {'__name__' : name}
     if template is not None:
         attrs['template'] = ViewPageTemplateFile(template)
@@ -83,14 +85,30 @@ def viewlet_directive(_context, name, *args, **kwargs):
     return viewletmeta.viewletDirective(_context, name, *args, **kwargs)
 
 def viewlet_manager_directive(_context, name, *args, **kwargs):
-    class_ = kwargs.get('class_')
-    template = kwargs.get('template')
+    template = kwargs.pop('template', None)
     provides = kwargs.setdefault('provides', IViewletManager)
+    class_ = kwargs.get('class_')
+    
+    if template is None:
+        return viewletmeta.viewletManagerDirective(
+            _context, name, *args, **kwargs)
 
-    if template:
-        bases = class_ and (class_,) or ()
-        kwargs['class_'] = ViewletManager(
-            name, provides, template=str(template), bases=bases)
-        del kwargs['template']
-        
-    return viewletmeta.viewletManagerDirective(_context, name, *args, **kwargs)
+    _new = ConfigurationMachine()
+    viewletmeta.viewletManagerDirective(_new, name, *args, **kwargs)
+    
+    for action in _new.actions:
+        try:
+            discriminator, handler, args = action
+            try:
+                name = discriminator.__getitem__(0)
+            except (AttributeError, IndexError):
+                continue
+
+            if name == 'viewletManager':
+                assert handler is zcml.handler, \
+                       "Unsupported action handler '%s'." % repr(handler)
+                new_class = args[1]
+                new_class.template = ViewPageTemplateFile(template)
+        finally:
+            _context.actions.append(action)
+            

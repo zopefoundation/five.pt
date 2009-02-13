@@ -3,6 +3,9 @@ Changelog
 
 In next version
 
+- Fixed issue where the ``template`` parameter to a viewlet manager
+  directive was effectively ignored. [malthe]
+
 - Fixed acquisition-wrapping issue with the (patched) bound template
   class (could cause infinite loop due to cyclic acquisition
   chain). [malthe]
