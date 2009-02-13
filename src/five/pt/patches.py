@@ -12,6 +12,7 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
      ZopeViewPageTemplateFile
 
 from Acquisition import aq_base
+from Acquisition.interfaces import IAcquirer
 
 try:
     from Products.Five.browser.pagetemplatefile import BoundPageTemplate
@@ -31,8 +32,8 @@ except ImportError:
                 im_self, args = args[0], args[1:]
             else:
                 im_self = aq_base(self.im_self)
-                im_self = im_self.__of__(im_self.context)
-
+                if IAcquirer.providedBy(im_self):
+                    im_self = im_self.__of__(im_self.context)
             return self.im_func(im_self, *args, **kw)
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
