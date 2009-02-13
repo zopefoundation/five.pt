@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next version
+five.pt 0.4 (released 2/13/2009)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Fixed issue where the ``template`` parameter to a viewlet manager
   directive was effectively ignored. [malthe]
