@@ -1,6 +1,9 @@
 Changelog
 =========
 
+- If the ``__get__`` method is called uninstantiated, just return the
+  class itself. [malthe]
+
 five.pt 0.4 (released 2/13/2009)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

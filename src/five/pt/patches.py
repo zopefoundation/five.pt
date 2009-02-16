@@ -44,6 +44,9 @@ from five.pt.pagetemplate import ViewPageTemplateFile
 _marker = object()
 
 def get_bound_template(self, instance, type):
+    if instance is None:
+        return self
+    
     template = getattr(self, '_template', _marker)
     if template is _marker:
         self._template = template = ViewPageTemplateFile(self.filename)
