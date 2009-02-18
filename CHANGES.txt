@@ -1,6 +1,8 @@
 Changelog
 =========
 
+- Added patch for ``Products.PageTemplates.PageTemplateFile``. [malthe]
+
 - Rework the "full namespace provided to path expression" change introduced
   in 0.3. We no longer call the expensive locals() function but construct a
   minimal namespace with the context and request ourselves. [hannosch]

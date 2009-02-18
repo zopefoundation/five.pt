@@ -11,6 +11,13 @@ Chameleon template instance, transparent to the calling class.
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
      ZopeViewPageTemplateFile
 
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
+     FiveViewPageTemplateFile
+     
+from five.pt.pagetemplate import ViewPageTemplateFile
+from five.pt.pagetemplate import BaseTemplateFile
+
 from Acquisition import aq_base
 from Acquisition.interfaces import IAcquirer
 
@@ -21,7 +28,7 @@ except ImportError:
     import Acquisition
     
     class BoundPageTemplate(BoundPageTemplate, Acquisition.Implicit):
-        """Emulate a class implementing Acquisition.interfaces.IAcquirer and
+        """Implementing Acquisition.interfaces.IAcquirer and
         IAcquisitionWrapper.
         """
 
@@ -36,11 +43,11 @@ except ImportError:
                     im_self = im_self.__of__(im_self.context)
             return self.im_func(im_self, *args, **kw)
 
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
-     FiveViewPageTemplateFile
-     
-from five.pt.pagetemplate import ViewPageTemplateFile
-
+    class BaseTemplateFile(BaseTemplateFile, Acquisition.Implicit):
+        """Implement Acquisition.interfaces.IAcquirer and
+        IAcquisitionWrapper.
+        """
+        
 _marker = object()
 
 def get_bound_template(self, instance, type):
@@ -53,5 +60,13 @@ def get_bound_template(self, instance, type):
 
     return BoundPageTemplate(template, instance)
 
+def call_template(self, *args, **kw):
+    template = getattr(self, '_template', _marker)
+    if template is _marker:
+        self._template = template = BaseTemplateFile(self.filename)
+
+    return template.__of__(self)(self, *args, **kw)
+
 FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
+PageTemplateFile.__call__ = call_template
