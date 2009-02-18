@@ -1,5 +1,4 @@
 import os
-import sys
 
 from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 
@@ -12,7 +11,6 @@ from AccessControl import getSecurityManager
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from z3c.pt import pagetemplate
-from five.pt.expressions import path_translator
 
 def get_physical_root(context):
     method = aq_get(context, 'getPhysicalRoot', None)
