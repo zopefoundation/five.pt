@@ -63,8 +63,18 @@ class ViewPageTemplate(pagetemplate.ViewPageTemplate):
         if view is None:
             namespace = {}
         else:
-            context = aq_inner(view.context)
-            request = request or view.request
+            try:
+                request = request or view.request
+                context = aq_inner(view.context)
+            except AttributeError:
+                """This may happen with certain dynamically created
+                classes,
+                e.g. ``plone.app.form._named.GeneratedClass``.
+                """
+                view = view.context
+                request = view.request
+                context = aq_inner(view.context)
+                
             namespace = dict(
                 context=context,
                 request=request,

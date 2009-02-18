@@ -1,6 +1,9 @@
 Changelog
 =========
 
+- Fixed edge-case (special case?) where the view of a
+  ViewPageTemplateFile is really only the view for a view. [malthe]
+
 - Added patch for ``Products.PageTemplates.PageTemplateFile``. [malthe]
 
 - Rework the "full namespace provided to path expression" change introduced
