@@ -17,6 +17,11 @@ def get_physical_root(context):
     if method is not None:
         return method()
 
+def test(condition, a, b):
+    if condition:
+        return a
+    return b
+        
 class BaseTemplate(pagetemplate.BaseTemplate):
     """Zope 2-compatible page template class."""
     
@@ -43,6 +48,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
                 here=context,
                 container=context,
                 nothing=None,
+                test=test,
                 path=pagetemplate.evaluate_path,
                 exists=pagetemplate.evaluate_exists,
                 root=get_physical_root(context),

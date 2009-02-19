@@ -1,6 +1,8 @@
 Changelog
 =========
 
+- Added test function to template context. [malthe]
+
 - Fixed edge-case (special case?) where the view of a
   ViewPageTemplateFile is really only the view for a view. [malthe]
 
