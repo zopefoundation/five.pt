@@ -65,7 +65,10 @@ def call_template(self, *args, **kw):
     if template is _marker:
         self._template = template = BaseTemplateFile(self.filename)
 
-    return template.__of__(self)(self, *args, **kw)
+    if IAcquirer.providedBy(template):
+        template = template.__of__(self)
+
+    return template(self, *args, **kw)
 
 FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
