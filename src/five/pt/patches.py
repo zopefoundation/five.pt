@@ -70,6 +70,14 @@ def call_template(self, *args, **kw):
 
     return template(self, *args, **kw)
 
+def get_macros(self):
+    template = getattr(self, '_template', _marker)
+    if template is _marker:
+        self._template = template = BaseTemplateFile(self.filename)
+
+    return template.__of__(self).macros
+
 FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
 PageTemplateFile.__call__ = call_template
+PageTemplateFile.macros = property(get_macros)

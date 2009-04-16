@@ -1,9 +1,9 @@
 Changelog
 =========
 
-0.7 - unreleased
-~~~~~~~~~~~~~~~~
+In next release
 
+- Patch ``macros`` attribute. [malthe]
 
 0.6 - 2009-04-06
 ~~~~~~~~~~~~~~~~
