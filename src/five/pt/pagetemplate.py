@@ -29,7 +29,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
 
     def render_macro(self, macro, global_scope=False, parameters=None):
         context = self._pt_get_context(None, None)
-
+        
         if parameters is not None:
             context.update(parameters)
 

@@ -43,7 +43,7 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless('here==container:True' in result)
         self.failUnless("root:(\'\',)" in result)
         self.failUnless("nothing:None" in result)
-        self.failUnless("modules:&amp;lt;foo&amp;gt;" in result)
+        self.failUnless("modules:&lt;foo&gt;" in result)
 
     def test_options(self):
         view = OptionsView(self.folder, self.folder.REQUEST)
