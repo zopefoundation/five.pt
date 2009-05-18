@@ -3,6 +3,8 @@ Changelog
 
 In next release
 
+- Update to latest Chameleon. [malthe]
+
 - Patch ``macros`` attribute. [malthe]
 
 0.6 - 2009-04-06
