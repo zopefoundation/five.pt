@@ -5,9 +5,7 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-
 from AccessControl import getSecurityManager
-
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from z3c.pt import pagetemplate
@@ -21,20 +19,20 @@ def test(condition, a, b):
     if condition:
         return a
     return b
-        
+
 class BaseTemplate(pagetemplate.BaseTemplate):
     """Zope 2-compatible page template class."""
-    
-    utility_builtins = {}
 
-    def render_macro(self, macro, global_scope=False, parameters=None):
+    utility_builtins = {}
+    
+    def render_macro(self, macro, parameters=None, **kw):
         context = self._pt_get_context(None, None)
-        
+
         if parameters is not None:
             context.update(parameters)
 
         return super(BaseTemplate, self).render_macro(
-            macro, global_scope=global_scope, parameters=context)
+            macro, parameters=context, **kw)
 
     def _pt_get_context(self, instance, request, kwargs={}):
         if instance is None:
@@ -65,6 +63,7 @@ class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
     """Zope 2-compatible page template file class."""
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
+
     def _pt_get_context(self, view, request, kwargs):
         if view is None:
             namespace = {}
