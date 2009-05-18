@@ -3,6 +3,8 @@ Changelog
 
 In next release
 
+- Default encoding of the base template set to UTF-8. [malthe]
+
 - Update to latest Chameleon. [malthe]
 
 - Patch ``macros`` attribute. [malthe]

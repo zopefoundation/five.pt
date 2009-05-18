@@ -24,6 +24,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
     """Zope 2-compatible page template class."""
 
     utility_builtins = {}
+    encoding = 'utf-8'
     
     def render_macro(self, macro, parameters=None, **kw):
         context = self._pt_get_context(None, None)
