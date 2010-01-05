@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release...
+0.8 - 2010-01-05
+~~~~~~~~~~~~~~~~
 
 - Fixed some calling convention oddity that would result in the view
   instance being passed doubly as the template arguments.

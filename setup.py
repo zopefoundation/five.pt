@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.7'
+version = '0.8'
 
 setup(name='five.pt',
       version=version,
@@ -26,6 +26,6 @@ setup(name='five.pt',
       install_requires=[
           'setuptools',
           'z3c.pt>=1.0b16',
-          'chameleon.core>=1.0b33',
+          'Chameleon>=1.0.6',
       ],
       )
