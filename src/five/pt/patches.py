@@ -14,7 +14,7 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
      FiveViewPageTemplateFile
-     
+
 from five.pt.pagetemplate import ViewPageTemplateFile
 from five.pt.pagetemplate import BaseTemplateFile
 
@@ -26,7 +26,7 @@ try:
 except ImportError:
     from zope.app.pagetemplate.viewpagetemplatefile import BoundPageTemplate
     import Acquisition
-    
+
     class BoundPageTemplate(BoundPageTemplate, Acquisition.Implicit):
         """Implementing Acquisition.interfaces.IAcquirer and
         IAcquisitionWrapper.
@@ -34,9 +34,9 @@ except ImportError:
 
         __parent__ = property(lambda self: self.im_self)
 
-        def __call__(self, *args, **kw):
+        def __call__(self, im_self=None, *args, **kw):
             if self.im_self is None:
-                im_self, args = args[0], args[1:]
+                im_self = im_self
             else:
                 im_self = aq_base(self.im_self)
                 if IAcquirer.providedBy(im_self):
@@ -47,13 +47,13 @@ except ImportError:
         """Implement Acquisition.interfaces.IAcquirer and
         IAcquisitionWrapper.
         """
-        
+
 _marker = object()
 
 def get_bound_template(self, instance, type):
     if instance is None:
         return self
-    
+
     template = getattr(self, '_template', _marker)
     if template is _marker:
         self._template = template = ViewPageTemplateFile(self.filename)
