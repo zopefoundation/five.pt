@@ -28,4 +28,8 @@ setup(name='five.pt',
           'z3c.pt>=1.0b16',
           'Chameleon>=1.0.6',
       ],
+      entry_points="""
+      [z3c.autoinclude.plugin]
+      target = plone
+      """,
       )
