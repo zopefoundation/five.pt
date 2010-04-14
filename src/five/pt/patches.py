@@ -85,18 +85,26 @@ PageTemplateFile.macros = property(get_macros)
 try:
     from five.grok.components import ZopeTwoPageTemplate
 
-    _tpf  = FiveViewPageTemplateFile(__file__)
     class GrokViewAwarePageTemplateFile(ViewPageTemplateFile):
-        def pt_getContext(self, *args, **kw):
-            global _tpf
-            return _tpf.pt_getContext(*args, **kw)
-        def pt_render(self, namespace, **kw):
-            if "args" in namespace:
-                del namespace["args"]
-            context=namespace.pop("context")
-            request=namespace.pop("request")
-            view=namespace["view"]
-            return self.__call__(_ob=view, context=context, request=request, **namespace)
+
+        def pt_getContext(self, instance, request, **kw):
+            return {}
+    
+        def _pt_get_context(self, instance, request, kwargs={}):
+            namespace = super(GrokViewAwarePageTemplateFile, self)._pt_get_context(
+                instance, request, kwargs)
+            if hasattr(self, 'pt_grokContext'):
+                namespace.update(self.pt_grokContext)
+            return namespace
+
+        def pt_render(self, namespace):
+            self.pt_grokContext = namespace
+            # namespace contains self.pt_getContext() result + \
+            # five.grok.components.ZopeTwoPageTemplate.getNamespace(view) result
+            # we have currently context, request, static, and view in the dict
+            view = namespace["view"]
+            return self.__call__(_ob=view)
+            # z3c.pt.pagetemplate.ViewPageTemplate.__call__ will call self._pt_get_context(ob, None, None)
 
     def setFromFilename(self, filename, _prefix=None):
         self._template = GrokViewAwarePageTemplateFile(filename, _prefix)
