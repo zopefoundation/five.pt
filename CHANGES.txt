@@ -1,6 +1,11 @@
 Changelog
 =========
 
+?.? - unreleased
+~~~~~~~~~~~~~~~~
+
+- Basic support for five.grok templates. [wichert]
+
 0.8 - 2010-01-05
 ~~~~~~~~~~~~~~~~
 

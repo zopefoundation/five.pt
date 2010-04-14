@@ -81,3 +81,26 @@ FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
 PageTemplateFile.__call__ = call_template
 PageTemplateFile.macros = property(get_macros)
+
+try:
+    from five.grok.components import ZopeTwoPageTemplate
+
+    _tpf  = FiveViewPageTemplateFile(__file__)
+    class GrokViewAwarePageTemplateFile(ViewPageTemplateFile):
+        def pt_getContext(self, *args, **kw):
+            global _tpf
+            return _tpf.pt_getContext(*args, **kw)
+        def pt_render(self, namespace, **kw):
+            if "args" in namespace:
+                del namespace["args"]
+            context=namespace.pop("context")
+            request=namespace.pop("request")
+            view=namespace["view"]
+            return self.__call__(_ob=view, context=context, request=request, **namespace)
+
+    def setFromFilename(self, filename, _prefix=None):
+        self._template = GrokViewAwarePageTemplateFile(filename, _prefix)
+    ZopeTwoPageTemplate.setFromFilename = setFromFilename
+except ImportError:
+    pass
+
