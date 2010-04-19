@@ -75,7 +75,10 @@ def get_macros(self):
     if template is _marker:
         self._template = template = BaseTemplateFile(self.filename)
 
-    return template.__of__(self).macros
+    if IAcquirer.providedBy(template):
+        return template.__of__(self).macros
+    else:
+        return template.macros
 
 FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
