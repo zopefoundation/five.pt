@@ -45,23 +45,6 @@ def SimpleViewletClass(src, offering=None, bases=(), attributes=None, name=u''):
 
     return class_
 
-def ViewletManager2(name, interface, template=None, bases=()):
-    attrs = {'__name__' : name}
-    if template is not None:
-        attrs['template'] = ViewPageTemplateFile(template)
-
-    if manager.ViewletManagerBase not in bases:
-        # Make sure that we do not get a default viewlet manager mixin, if the
-        # provided base is already a full viewlet manager implementation.
-        if not (len(bases) == 1 and
-                IViewletManager.implementedBy(bases[0])):
-            bases = bases + (manager.ViewletManagerBase,)
-
-    ViewletManager = type(
-        '<ViewletManager providing %s>' % interface.getName(), bases, attrs)
-    classImplements(ViewletManager, interface)
-    return ViewletManager
-
 def page_directive(_context, name, *args, **kwargs):
     class_ = kwargs.get('class_')
     template = kwargs.get('template')
@@ -70,7 +53,7 @@ def page_directive(_context, name, *args, **kwargs):
         bases = class_ and (class_,) or ()
         kwargs['class_'] = SimpleViewClass(str(template), bases=bases, name=name)
         del kwargs['template']
-        
+
     return viewmeta.page(_context, name, *args, **kwargs)
 
 def viewlet_directive(_context, name, *args, **kwargs):
@@ -81,21 +64,21 @@ def viewlet_directive(_context, name, *args, **kwargs):
         bases = class_ and (class_,) or ()
         kwargs['class_'] = SimpleViewletClass(str(template), bases=bases, name=name)
         del kwargs['template']
-        
+
     return viewletmeta.viewletDirective(_context, name, *args, **kwargs)
 
 def viewlet_manager_directive(_context, name, *args, **kwargs):
     template = kwargs.pop('template', None)
     provides = kwargs.setdefault('provides', IViewletManager)
     class_ = kwargs.get('class_')
-    
+
     if template is None:
         return viewletmeta.viewletManagerDirective(
             _context, name, *args, **kwargs)
 
     _new = ConfigurationMachine()
     viewletmeta.viewletManagerDirective(_new, name, *args, **kwargs)
-    
+
     for action in _new.actions:
         try:
             discriminator, handler, args = action
@@ -111,4 +94,4 @@ def viewlet_manager_directive(_context, name, *args, **kwargs):
                 new_class.template = ViewPageTemplateFile(template)
         finally:
             _context.actions.append(action)
-            
+
