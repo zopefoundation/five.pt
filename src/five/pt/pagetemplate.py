@@ -25,7 +25,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
 
     utility_builtins = {}
     encoding = 'utf-8'
-    
+
     def render_macro(self, macro, parameters=None, **kw):
         context = self._pt_get_context(None, None)
 
@@ -80,7 +80,7 @@ class ViewPageTemplate(pagetemplate.ViewPageTemplate):
                 view = view.context
                 request = view.request
                 context = aq_inner(view.context)
-                
+
             namespace = dict(
                 context=context,
                 request=request,
@@ -98,12 +98,12 @@ class ViewPageTemplate(pagetemplate.ViewPageTemplate):
                 options=kwargs)
 
         return namespace
-    
+
 class ViewPageTemplateFile(ViewPageTemplate, pagetemplate.ViewPageTemplateFile):
     """If ``filename`` is a relative path, the module path of the
     class where the instance is used to get an absolute path."""
 
     def getId(self):
         return os.path.basename(self.filename)
-    
+
     id = property(getId)
