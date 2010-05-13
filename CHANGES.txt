@@ -3,6 +3,8 @@ Changelog
 
 In next release...
 
+- If template is not an acquirer, wrap it implicitly. [malthe]
+
 - Removed unused ``ViewletManager`` ZCML handler. [malthe]
 
 0.10 - 2010-04-20

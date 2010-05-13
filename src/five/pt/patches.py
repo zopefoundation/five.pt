@@ -20,6 +20,7 @@ from five.pt.pagetemplate import BaseTemplateFile
 
 from Acquisition import aq_base
 from Acquisition.interfaces import IAcquirer
+from Acquisition import ImplicitAcquisitionWrapper
 
 try:
     from Products.Five.browser.pagetemplatefile import BoundPageTemplate
@@ -67,6 +68,8 @@ def call_template(self, *args, **kw):
 
     if IAcquirer.providedBy(template):
         template = template.__of__(self)
+    else:
+        template = ImplicitAcquisitionWrapper(template, self)
 
     return template(self, *args, **kw)
 
