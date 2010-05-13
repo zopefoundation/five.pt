@@ -5,7 +5,7 @@ version = '0.11dev'
 setup(name='five.pt',
       version=version,
       description="Five bridges and patches to use Chameleon with Zope 2.",
-      long_description=open("README.txt").read() + open("CHANGES.txt").read(),
+      long_description=open("README.txt").read() + "\n" + open("CHANGES.txt").read(),
       classifiers=[
         "Framework :: Zope2",
         "Programming Language :: Python",
