@@ -1,5 +1,6 @@
 import os
 
+from DateTime import DateTime
 from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
 
 from Acquisition import aq_get
@@ -53,6 +54,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
                 root=get_physical_root(context),
                 user=getSecurityManager().getUser(),
                 modules=SecureModuleImporter,
+                DateTime=DateTime,
                 options=kwargs)
 
         for name, value in self.utility_builtins.items():
