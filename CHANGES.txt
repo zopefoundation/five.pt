@@ -3,9 +3,14 @@ Changelog
 
 In next release...
 
+- ...
+
+
+1.1 - 2010-05-15
+~~~~~~~~~~~~~~~~~
+
 - Add DateTime to the base context. Fixes problems with certain ZMI pages.
   [wichert]
-
 
 1.0 - 2010-05-13
 ~~~~~~~~~~~~~~~~~
