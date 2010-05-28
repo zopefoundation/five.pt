@@ -48,6 +48,13 @@ We can base the view on an existing class.
   >>> issubclass(factory, View)
   True
 
+Our views will often get utf-8 encoded strings from Zope. They must be
+able to handle that. The PageTemplate class has an attribute encoding, that
+is being used for decoding strings.
+
+  >>> factory.index.encoding
+  'UTF-8'
+
 If the ``__call__`` attribute is set to a template, calling the view will
 render the template.
 

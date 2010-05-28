@@ -67,6 +67,8 @@ class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
 
+    encoding = 'UTF-8'
+
     def _pt_get_context(self, view, request, kwargs):
         if view is None:
             namespace = {}
