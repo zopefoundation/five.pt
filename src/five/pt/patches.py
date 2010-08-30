@@ -19,6 +19,7 @@ from five.pt.pagetemplate import ViewPageTemplateFile
 from five.pt.pagetemplate import BaseTemplateFile
 
 from Acquisition import aq_base
+from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from Acquisition import ImplicitAcquisitionWrapper
 
@@ -69,7 +70,7 @@ def call_template(self, *args, **kw):
     if IAcquirer.providedBy(template):
         template = template.__of__(self)
     else:
-        template = ImplicitAcquisitionWrapper(template, self)
+        template = ImplicitAcquisitionWrapper(template, aq_parent(self))
 
     return template(self, *args, **kw)
 
