@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.2dev'
+version = '1.3dev'
 
 setup(name='five.pt',
       version=version,

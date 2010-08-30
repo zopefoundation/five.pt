@@ -3,6 +3,12 @@ Changelog
 
 In next release...
 
+- ...
+
+
+1.2 - 2010-08-30
+~~~~~~~~~~~~~~~~
+
 - Fixed acquisition-wrapping issue: we need to wrap with the parent to
   avoid a pair of template objects (original and patched).
 
