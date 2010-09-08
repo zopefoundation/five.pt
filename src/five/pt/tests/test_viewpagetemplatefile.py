@@ -25,13 +25,15 @@ class TestPageTemplateFile(ZopeTestCase):
         from Products.Five import zcml
         import Products.Five
         import z3c.pt
+        import five.pt
         zcml.load_config("configure.zcml", Products.Five)
+        zcml.load_config("configure.zcml", five.pt)
         zcml.load_config("configure.zcml", z3c.pt)
 
     def test_simple(self):
         view = SimpleView(self.folder, self.folder.REQUEST)
         result = view.index()
-        self.failUnless('Hello World' in result)
+        self.failUnless('Hello world!' in result)
 
     def test_locals(self):
         view = LocalsView(self.folder, self.folder.REQUEST)

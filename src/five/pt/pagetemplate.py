@@ -43,7 +43,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
             context = aq_parent(instance)
             namespace = dict(
                 context=context,
-                request=request or aq_get(instance, 'REQUEST'),
+                request=request or aq_get(instance, 'REQUEST', None),
                 template=self,
                 here=context,
                 container=context,

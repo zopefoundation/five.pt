@@ -3,8 +3,8 @@ Changelog
 
 In next release...
 
-- ...
-
+- Added support for ``PageTemplate`` and
+  ``ZopePageTemplate``. [malthe]
 
 1.2 - 2010-08-30
 ~~~~~~~~~~~~~~~~
