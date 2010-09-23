@@ -57,6 +57,7 @@ except ImportError:
 
 _marker = object()
 
+
 def get_bound_template(self, instance, type):
     if instance is None:
         return self
@@ -67,12 +68,14 @@ def get_bound_template(self, instance, type):
 
     return BoundPageTemplate(template, instance)
 
+
 def call_template(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
     if template is _marker or self._text != template.body:
         self._v_template = template = BaseTemplate(self._text)
 
     return template(self, *args, **kw)
+
 
 def call_template_and_wrap(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
@@ -86,6 +89,7 @@ def call_template_and_wrap(self, *args, **kw):
 
     return template(self, *args, **kw)
 
+
 def call_template_file(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
     if template is _marker:
@@ -97,6 +101,7 @@ def call_template_file(self, *args, **kw):
         template = ImplicitAcquisitionWrapper(template, aq_parent(self))
 
     return template(self, *args, **kw)
+
 
 def get_macros(self):
     template = getattr(self, '_v_template', _marker)
@@ -124,9 +129,10 @@ try:
 
         def pt_getContext(self, instance, request, **kw):
             return {}
-    
+
         def _pt_get_context(self, instance, request, kwargs={}):
-            namespace = super(GrokViewAwarePageTemplateFile, self)._pt_get_context(
+            namespace = super(
+                GrokViewAwarePageTemplateFile, self)._pt_get_context(
                 instance, request, kwargs)
             if hasattr(self, 'pt_grokContext'):
                 namespace.update(self.pt_grokContext)
@@ -135,15 +141,16 @@ try:
         def pt_render(self, namespace):
             self.pt_grokContext = namespace
             # namespace contains self.pt_getContext() result + \
-            # five.grok.components.ZopeTwoPageTemplate.getNamespace(view) result
-            # we have currently context, request, static, and view in the dict
+            # five.grok.components.ZopeTwoPageTemplate.getNamespace(view)
+            # result we have currently context, request, static, and
+            # view in the dict
             view = namespace["view"]
             return self.__call__(_ob=view)
-            # z3c.pt.pagetemplate.ViewPageTemplate.__call__ will call self._pt_get_context(ob, None, None)
+            # z3c.pt.pagetemplate.ViewPageTemplate.__call__ will call
+            # self._pt_get_context(ob, None, None)
 
     def setFromFilename(self, filename, _prefix=None):
         self._template = GrokViewAwarePageTemplateFile(filename, _prefix)
     ZopeTwoPageTemplate.setFromFilename = setFromFilename
 except ImportError:
     pass
-
