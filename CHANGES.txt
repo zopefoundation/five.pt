@@ -1,6 +1,10 @@
 Changelog
 =========
 
+- Added support for eager loading (environment variable
+  ``CHAMELEON_EAGER``). This flag should be passed only in development
+  mode and will reveal any templates which do not parse.
+
 1.3 - 2010-09-08
 ~~~~~~~~~~~~~~~~
 

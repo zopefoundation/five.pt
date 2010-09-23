@@ -1,19 +1,22 @@
-<configure xmlns="http://namespaces.zope.org/zope">
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five">
 
-  <include package="five.pt" file="meta.zcml" />
-  <include package="five.pt.patches" />
   <include package="z3c.pt" />
+  <include package="five.pt" file="meta.zcml" />
 
   <utility
-     name="path"
-     component=".expressions.path_translator" />
+      name="path"
+      component=".expressions.path_translator" />
 
   <utility
-     name="exists"
-     component=".expressions.exists_translator" />
+      name="exists"
+      component=".expressions.exists_translator" />
 
   <utility
-     name="provider"
-     component=".expressions.provider_translator" />
+      name="provider"
+      component=".expressions.provider_translator" />
+
+  <five:registerPackage package="." initialize=".initialize" />
 
 </configure>
