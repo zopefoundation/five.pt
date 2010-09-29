@@ -1,12 +1,19 @@
 Changelog
 =========
 
+1.3.2 - 2010-09-29
+~~~~~~~~~~~~~~~~~~
+
+- Add a same_type method to the default namespace.
+  [wichert]
+
 1.3.1 - 2010-09-23
 ~~~~~~~~~~~~~~~~~~
 
 - Added support for eager loading (environment variable
   ``CHAMELEON_EAGER``). This flag should be passed only in development
   mode and will reveal any templates which do not parse.
+  [malthe]
 
 1.3 - 2010-09-08
 ~~~~~~~~~~~~~~~~

@@ -16,6 +16,17 @@ def get_physical_root(context):
     if method is not None:
         return method()
 
+def same_type(arg1, *args):
+    """Compares the class or type of two or more objects. Copied from
+    RestrictedPython.
+    """
+    t = getattr(arg1, '__class__', type(arg1))
+    for arg in args:
+        if getattr(arg, '__class__', type(arg)) is not t:
+            return False
+    return True
+
+
 def test(condition, a, b):
     if condition:
         return a
@@ -48,6 +59,7 @@ class BaseTemplate(pagetemplate.BaseTemplate):
                 here=context,
                 container=context,
                 nothing=None,
+                same_type=same_type,
                 test=test,
                 path=pagetemplate.evaluate_path,
                 exists=pagetemplate.evaluate_exists,
