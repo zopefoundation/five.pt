@@ -1,5 +1,6 @@
+import patches
+
 def initialize(site):
-    import patches
     import chameleon.core.config
 
     if chameleon.core.config.EAGER_PARSING:
