@@ -20,6 +20,9 @@ class LocalsView(BrowserView):
 class OptionsView(BrowserView):
     index = ViewPageTemplateFile('options.pt')
 
+class MissingView(BrowserView):
+    index = ViewPageTemplateFile('missing.pt')
+
 class TestPageTemplateFile(ZopeTestCase):
     def afterSetUp(self):
         from Products.Five import zcml
@@ -57,6 +60,12 @@ class TestPageTemplateFile(ZopeTestCase):
         result = view.index(**options)
         self.failUnless("a : 1" in result)
         self.failUnless("c : abc" in result)
+
+    def test_MissingValue(self):
+        view = MissingView(self.folder, self.folder.REQUEST)
+        import Missing
+        result = view.index(missing=Missing.MV)
+        self.failUnless('<span></span>' in result)
 
 
 def test_suite():
