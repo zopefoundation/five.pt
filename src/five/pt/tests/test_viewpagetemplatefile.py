@@ -80,9 +80,20 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless("c : abc" in result)
 
     def test_MissingValue(self):
-        view = MissingView(self.folder, self.folder.REQUEST)
+        request = self.folder.REQUEST
+        view = MissingView(self.folder, request)
+
+        from zope.component import provideUtility
+        from zope.i18n.interfaces import ITranslationDomain
+        from zope.i18n.simpletranslationdomain import SimpleTranslationDomain
+        pfp = SimpleTranslationDomain('test', {})
+        provideUtility(pfp, ITranslationDomain, name='test')
+
         import Missing
+        request["LANGUAGE"] = 'en'
         result = view.index(missing=Missing.MV)
+        del request.other["LANGUAGE"]
+
         self.failUnless('<span></span>' in result)
 
 
