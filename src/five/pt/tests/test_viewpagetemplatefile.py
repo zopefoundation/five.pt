@@ -4,6 +4,7 @@ from Products.Five import BrowserView
 from Testing.ZopeTestCase import ZopeTestCase
 
 from five.pt.pagetemplate import ViewPageTemplateFile
+from five.pt.pagetemplate import BaseTemplateFile
 
 
 class SimpleView(BrowserView):
@@ -18,6 +19,11 @@ class LocalsView(BrowserView):
         return '<foo></bar>'
 
     index = ViewPageTemplateFile('locals.pt')
+
+
+class LocalsBaseView(BrowserView):
+
+    index = BaseTemplateFile('locals_base.pt')
 
 
 class OptionsView(BrowserView):
@@ -50,10 +56,17 @@ class TestPageTemplateFile(ZopeTestCase):
         #self.failUnless('Folder at test_folder_1_' in result)
         #self.failUnless('http://nohost' in result)
         self.failUnless('here==context:True' in result)
-        self.failUnless('here==container:True' in result)
+        self.failUnless('parent==container:True' in result)
         self.failUnless("root:(\'\',)" in result)
         self.failUnless("nothing:None" in result)
         self.failUnless("modules:&lt;foo&gt;" in result)
+
+    def test_locals_base(self):
+        view = LocalsBaseView(self.folder, self.folder.REQUEST)
+        result = view.index()
+        self.failUnless('here==context:True' in result)
+        self.failUnless('container==None:True' in result)
+        self.failUnless("nothing:None" in result)
 
     def test_options(self):
         view = OptionsView(self.folder, self.folder.REQUEST)
