@@ -8,8 +8,8 @@ We replace the ``__get__``-method of the ViewPageTemplateFile class
 Chameleon template instance, transparent to the calling class.
 """
 
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile as \
-     ZopeViewPageTemplateFile
+from zope.app.pagetemplate.viewpagetemplatefile import (
+    ViewPageTemplateFile as ZopeViewPageTemplateFile)
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PageTemplates.PageTemplateFile import PageTemplate

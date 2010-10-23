@@ -13,6 +13,7 @@ from Products.Five.browser import metaconfigure as viewmeta
 
 from five.pt.pagetemplate import ViewPageTemplateFile
 
+
 def SimpleViewClass(src, offering=None, used_for=None, bases=(), name=u''):
     if offering is None:
         offering = sys._getframe(1).f_globals
@@ -28,15 +29,17 @@ def SimpleViewClass(src, offering=None, used_for=None, bases=(), name=u''):
 
     return class_
 
-def SimpleViewletClass(src, offering=None, bases=(), attributes=None, name=u''):
+
+def SimpleViewletClass(src, offering=None, bases=(), attributes=None,
+                       name=u''):
     if offering is None:
         offering = sys._getframe(1).f_globals
 
     # Create the base class hierarchy
     bases += (viewlet.simple, viewlet.ViewletBase)
 
-    attrs = {'index' : ViewPageTemplateFile(src, offering),
-             '__name__' : name}
+    attrs = {'index': ViewPageTemplateFile(src, offering),
+             '__name__': name}
     if attributes:
         attrs.update(attributes)
 
@@ -45,16 +48,19 @@ def SimpleViewletClass(src, offering=None, bases=(), attributes=None, name=u''):
 
     return class_
 
+
 def page_directive(_context, name, *args, **kwargs):
     class_ = kwargs.get('class_')
     template = kwargs.get('template')
 
     if template:
         bases = class_ and (class_,) or ()
-        kwargs['class_'] = SimpleViewClass(str(template), bases=bases, name=name)
+        kwargs['class_'] = SimpleViewClass(
+            str(template), bases=bases, name=name)
         del kwargs['template']
 
     return viewmeta.page(_context, name, *args, **kwargs)
+
 
 def viewlet_directive(_context, name, *args, **kwargs):
     class_ = kwargs.get('class_')
@@ -62,10 +68,12 @@ def viewlet_directive(_context, name, *args, **kwargs):
 
     if template:
         bases = class_ and (class_,) or ()
-        kwargs['class_'] = SimpleViewletClass(str(template), bases=bases, name=name)
+        kwargs['class_'] = SimpleViewletClass(
+            str(template), bases=bases, name=name)
         del kwargs['template']
 
     return viewletmeta.viewletDirective(_context, name, *args, **kwargs)
+
 
 def viewlet_manager_directive(_context, name, *args, **kwargs):
     template = kwargs.pop('template', None)
@@ -94,4 +102,3 @@ def viewlet_manager_directive(_context, name, *args, **kwargs):
                 new_class.template = ViewPageTemplateFile(template)
         finally:
             _context.actions.append(action)
-

@@ -1,5 +1,6 @@
 import patches
 
+
 def initialize(site):
     import chameleon.core.config
 

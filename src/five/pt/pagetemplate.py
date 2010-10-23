@@ -11,10 +11,12 @@ from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from z3c.pt import pagetemplate
 
+
 def get_physical_root(context):
     method = aq_get(context, 'getPhysicalRoot', None)
     if method is not None:
         return method()
+
 
 def same_type(arg1, *args):
     """Compares the class or type of two or more objects. Copied from
@@ -31,6 +33,7 @@ def test(condition, a, b):
     if condition:
         return a
     return b
+
 
 class BaseTemplate(pagetemplate.BaseTemplate):
     """Zope 2-compatible page template class."""
@@ -74,8 +77,10 @@ class BaseTemplate(pagetemplate.BaseTemplate):
 
         return namespace
 
+
 class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
     """Zope 2-compatible page template file class."""
+
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
 
@@ -115,7 +120,9 @@ class ViewPageTemplate(pagetemplate.ViewPageTemplate):
 
         return namespace
 
-class ViewPageTemplateFile(ViewPageTemplate, pagetemplate.ViewPageTemplateFile):
+
+class ViewPageTemplateFile(ViewPageTemplate,
+                           pagetemplate.ViewPageTemplateFile):
     """If ``filename`` is a relative path, the module path of the
     class where the instance is used to get an absolute path."""
 

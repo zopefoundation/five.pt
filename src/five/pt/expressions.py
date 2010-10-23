@@ -80,7 +80,7 @@ class FiveTraverser(object):
 
         if call is False:
             return base
-        
+
         if getattr(base, '__call__', _marker) is not _marker or callable(base):
             # here's where we're different from the standard path
             # traverser
@@ -88,15 +88,19 @@ class FiveTraverser(object):
 
         return base
 
+
 class PathTranslator(PathTranslator):
     path_traverse = FiveTraverser()
+
 
 class FiveExistsTraverser(ZopeExistsTraverser):
     exceptions = AttributeError, LookupError, TypeError, \
                  NotFound, Unauthorized, TraversalError
 
+
 class ExistsTranslator(ExistsTranslator):
     path_traverse = FiveExistsTraverser()
+
 
 class FiveContentProviderTraverser(object):
     def __call__(self, context, request, view, name):
@@ -112,6 +116,7 @@ class FiveContentProviderTraverser(object):
 
         cp.update()
         return cp.render()
+
 
 class FiveProviderTranslator(ProviderTranslator):
     content_provider_traverser = FiveContentProviderTraverser()
