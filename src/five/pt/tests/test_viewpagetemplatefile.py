@@ -56,7 +56,7 @@ class TestPageTemplateFile(ZopeTestCase):
         #self.failUnless('Folder at test_folder_1_' in result)
         #self.failUnless('http://nohost' in result)
         self.failUnless('here==context:True' in result)
-        self.failUnless('parent==container:True' in result)
+        self.failUnless('here==container:True' in result)
         self.failUnless("root:(\'\',)" in result)
         self.failUnless("nothing:None" in result)
         self.failUnless("modules:&lt;foo&gt;" in result)
