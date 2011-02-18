@@ -10,6 +10,10 @@
       component=".expressions.path_translator" />
 
   <utility
+      name="python"
+      component=".expressions.python_translator" />
+
+  <utility
       name="exists"
       component=".expressions.exists_translator" />
 

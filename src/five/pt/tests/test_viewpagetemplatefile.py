@@ -15,9 +15,6 @@ class LocalsView(BrowserView):
     def available(self):
         return 'yes'
 
-    def tagsoup(self):
-        return '<foo></bar>'
-
     index = ViewPageTemplateFile('locals.pt')
 
 
@@ -28,6 +25,15 @@ class LocalsBaseView(BrowserView):
 
 class OptionsView(BrowserView):
     index = ViewPageTemplateFile('options.pt')
+
+
+class SecureView(BrowserView):
+    index = ViewPageTemplateFile('secure.pt')
+
+    __allow_access_to_unprotected_subobjects__ = True
+
+    def tagsoup(self):
+        return '<foo></bar>'
 
 
 class MissingView(BrowserView):
@@ -49,6 +55,21 @@ class TestPageTemplateFile(ZopeTestCase):
         result = view.index()
         self.failUnless('Hello world!' in result)
 
+    def test_secure(self):
+        view = SecureView(self.folder, self.folder.REQUEST)
+        from zExceptions import Unauthorized
+        try:
+            result = view.index()
+        except Unauthorized:
+            pass
+        else:
+            self.fail("Expected unauthorized.")
+
+        from AccessControl.SecurityInfo import allow_module
+        allow_module("cgi")
+        result = view.index()
+        self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
+
     def test_locals(self):
         view = LocalsView(self.folder, self.folder.REQUEST)
         result = view.index()
@@ -59,7 +80,7 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless('here==container:True' in result)
         self.failUnless("root:(\'\',)" in result)
         self.failUnless("nothing:None" in result)
-        self.failUnless("modules:&lt;foo&gt;" in result)
+        self.failUnless("rfc822" in result)
 
     def test_locals_base(self):
         view = LocalsBaseView(self.folder, self.folder.REQUEST)

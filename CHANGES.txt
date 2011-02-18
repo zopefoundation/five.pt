@@ -1,6 +1,11 @@
 Changelog
 =========
 
+In next release...
+
+- Python-expressions are now subject to access-control security.
+  [malthe]
+
 1.3.3 - 2010-09-30
 ~~~~~~~~~~~~~~~~~~
 

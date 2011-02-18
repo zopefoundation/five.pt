@@ -27,6 +27,7 @@ setup(name='five.pt',
           'setuptools',
           'z3c.pt>=1.2.1',
           'Chameleon>=1.2.11',
+          'sourcecodegen',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]

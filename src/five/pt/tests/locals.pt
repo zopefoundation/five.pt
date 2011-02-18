@@ -5,7 +5,6 @@
     <div tal:replace="python:'here==container:'+str(here==container)" />
     <div tal:replace="string:root:${root/getPhysicalPath}" />
     <div tal:replace="string:nothing:${nothing}" />
-    <div tal:define="cgi python:modules['cgi']">
-        modules:<span tal:replace="python:cgi.escape(view.tagsoup())" />
-    </div>
+    <div tal:define="cgi python:modules['cgi']"
+         tal:replace="python: dir(cgi)" />
 </div>
