@@ -71,16 +71,16 @@ def get_bound_template(self, instance, type):
 
 def call_template(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
-    if template is _marker or self._text != template.body:
-        self._v_template = template = BaseTemplate(self._text)
+    if template is _marker or self._text != template.source:
+        self._v_template = template = BaseTemplate(self._text, keep_source=True)
 
     return template(self, *args, **kw)
 
 
 def call_template_and_wrap(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
-    if template is _marker or self._text != template.body:
-        self._v_template = template = BaseTemplate(self._text)
+    if template is _marker or self._text != template.source:
+        self._v_template = template = BaseTemplate(self._text, keep_source=True)
 
     if IAcquirer.providedBy(template):
         template = template.__of__(aq_parent(self))

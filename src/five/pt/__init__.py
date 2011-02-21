@@ -2,9 +2,9 @@ import patches
 
 
 def initialize(site):
-    import chameleon.core.config
+    import chameleon.config
 
-    if chameleon.core.config.EAGER_PARSING:
+    if chameleon.config.EAGER_PARSING:
         import gc
 
         # this only deals with the page template classes provided by

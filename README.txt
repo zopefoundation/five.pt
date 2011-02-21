@@ -1,8 +1,9 @@
 Overview
 ========
 
-The five.pt package brings the Chameleon template engine to Zope 2. It's a
-drop-in replacement, providing bridges to the most common API.
+The five.pt package brings the Chameleon template engine to the Zope 2
+platform. It's a drop-in replacement, providing bridges to the most
+common API.
 
 Support for browser pages, viewlets and viewlet managers is included.
 

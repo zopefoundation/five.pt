@@ -1,7 +1,16 @@
 Changelog
 =========
 
-In next release...
+In next release ...
+
+- Update to Chameleon 2.0.
+
+  This release includes many changes and is a complete rewrite of the
+  1.x series.
+
+  Note that Python 2.7+ is now required.
+
+  [malthe]
 
 - Python-expressions are now subject to access-control security.
   [malthe]
@@ -11,7 +20,6 @@ In next release...
 
 - Apply patches at import time instead of product initialisation.
   [wichert]
-
 
 1.3.2 - 2010-09-29
 ~~~~~~~~~~~~~~~~~~
@@ -31,7 +39,8 @@ In next release...
 ~~~~~~~~~~~~~~~~
 
 - Added support for ``PageTemplate`` and
-  ``ZopePageTemplate``. [malthe]
+  ``ZopePageTemplate``.
+  [malthe]
 
 1.2 - 2010-08-30
 ~~~~~~~~~~~~~~~~

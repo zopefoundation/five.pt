@@ -1,26 +1,11 @@
-from compiler import parse
-
-from z3c.pt.expressions import PathTranslator
-from z3c.pt.expressions import ExistsTranslator
-from z3c.pt.expressions import ZopeExistsTraverser
-from z3c.pt.expressions import ProviderTranslator
-from chameleon.zpt.expressions import PythonTranslator
-from chameleon.core import types
-from sourcecodegen import generate_code
+from ast import Assign
+from ast import NodeTransformer
+from compiler import parse as ast24_parse
 
 from Acquisition import aq_base
 from OFS.interfaces import ITraversable
 from Products.PageTemplates import ZRPythonExpr
 from zExceptions import NotFound, Unauthorized
-from RestrictedPython.RestrictionMutator import RestrictionMutator
-from RestrictedPython import MutatingWalker
-from RestrictedPython.Guards import safe_builtins
-
-from AccessControl.ZopeGuards import guarded_getattr
-from AccessControl.ZopeGuards import guarded_getitem
-from AccessControl.ZopeGuards import guarded_apply
-from AccessControl.ZopeGuards import guarded_iter
-from AccessControl.ZopeGuards import protected_inplacevar
 
 from zope import component
 from zope.proxy import removeAllProxies
@@ -29,6 +14,25 @@ from zope.traversing.interfaces import TraversalError
 from zope.contentprovider.interfaces import IContentProvider
 from zope.contentprovider.interfaces import ContentProviderLookupError
 
+from RestrictedPython.RestrictionMutator import RestrictionMutator
+from RestrictedPython import MutatingWalker
+
+from AccessControl.ZopeGuards import guarded_getattr
+from AccessControl.ZopeGuards import guarded_getitem
+from AccessControl.ZopeGuards import guarded_apply
+from AccessControl.ZopeGuards import guarded_iter
+from AccessControl.ZopeGuards import protected_inplacevar
+
+from chameleon.astutil import Symbol
+from chameleon.astutil import Static
+from chameleon.astutil import parse
+from chameleon.codegen import template
+from chameleon.tales import TalesExpr
+from chameleon.utils import decode_htmlentities
+from chameleon.exc import ExpressionError
+from sourcecodegen import generate_code
+
+from z3c.pt import expressions
 
 _marker = object()
 
@@ -37,6 +41,16 @@ try:
     AQ_WRAP_CP = True
 except ImportError:
     AQ_WRAP_CP = False
+
+
+zope2_exceptions = NameError, \
+                   ValueError, \
+                   AttributeError, \
+                   LookupError, \
+                   TypeError, \
+                   NotFound, \
+                   Unauthorized, \
+                   TraversalError
 
 
 def render(ob, request):
@@ -103,20 +117,23 @@ class FiveTraverser(object):
         return base
 
 
-class PathTranslator(PathTranslator):
-    path_traverse = FiveTraverser()
+class PathExpr(expressions.PathExpr):
+    exceptions = zope2_exceptions
+
+    traverser = Static(
+        template("cls()", cls=Symbol(FiveTraverser), mode="eval")
+        )
 
 
-class FiveExistsTraverser(ZopeExistsTraverser):
-    exceptions = AttributeError, LookupError, TypeError, \
-                 NotFound, Unauthorized, TraversalError
+class NocallExpr(expressions.NocallExpr, PathExpr):
+    pass
 
 
-class ExistsTranslator(ExistsTranslator):
-    path_traverse = FiveExistsTraverser()
+class ExistsExpr(expressions.ExistsExpr):
+    exceptions = zope2_exceptions
 
 
-class FiveContentProviderTraverser(object):
+class ContentProviderTraverser(object):
     def __call__(self, context, request, view, name):
         cp = component.queryMultiAdapter(
             (context, request, view), IContentProvider, name=name)
@@ -132,13 +149,13 @@ class FiveContentProviderTraverser(object):
         return cp.render()
 
 
-class FiveProviderTranslator(ProviderTranslator):
-    content_provider_traverser = FiveContentProviderTraverser()
+class ProviderExpr(expressions.ProviderExpr):
+    traverser = Static(
+        template("cls()", cls=Symbol(ContentProviderTraverser), mode="eval")
+        )
 
 
-class FivePythonTranslator(PythonTranslator):
-    rm = RestrictionMutator()
-
+class RestrictionTransform(NodeTransformer):
     secured = {
         '_getattr_': guarded_getattr,
         '_getitem_': guarded_getitem,
@@ -147,38 +164,34 @@ class FivePythonTranslator(PythonTranslator):
         '_inplacevar_': protected_inplacevar,
     }
 
-    def translate(self, string, escape=None):
-        """We use the ``parser`` module to determine if
-        an expression is a valid python expression.
+    def visit_Name(self, node):
+        value = self.secured.get(node.id)
+        if value is not None:
+            return Symbol(value)
 
-        Make sure the formatted syntax error exception contains the
-        expression string.
+        return node
 
-        >>> from traceback import format_exc
-        >>> translate = PythonTranslator().translate
-        >>> try: translate('abc:def:ghi')
-        ... except SyntaxError, e: 'abc:def:ghi' in format_exc(e)
-        True
-        """
 
-        if isinstance(string, unicode):
-            string = string.encode('utf-8')
+class PythonExpr(TalesExpr):
+    rm = RestrictionMutator()
+    rt = RestrictionTransform()
 
-        if string:
-            expression = string.strip()
-            node = parse(expression, 'eval').node
-            MutatingWalker.walk(node, self.rm)
-            string = generate_code(node)
+    def __init__(self, expression):
+        self.expression = expression
 
-            if isinstance(string, str):
-                string = string.decode('utf-8')
+    def __call__(self, target, engine):
+        string = self.expression.strip().replace('\n', ' ')
+        decoded = decode_htmlentities(string)
 
-            value = types.value(string.strip())
-            value.symbol_mapping.update(self.secured)
+        node = ast24_parse(decoded, 'eval').node
+        MutatingWalker.walk(node, self.rm)
+        string = generate_code(node)
 
-            return value
+        try:
+            value = parse(string, 'eval').body
+        except SyntaxError as exc:
+            raise ExpressionError(exc.msg, decoded)
 
-python_translator = FivePythonTranslator()
-path_translator = PathTranslator()
-exists_translator = ExistsTranslator()
-provider_translator = FiveProviderTranslator()
+        self.rt.visit(value)
+
+        return [Assign([target], value)]

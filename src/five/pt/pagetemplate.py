@@ -9,7 +9,18 @@ from Acquisition import aq_parent
 from AccessControl import getSecurityManager
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
+from chameleon.tales import StringExpr
+from chameleon.tales import NotExpr
+from chameleon.tales import PythonExpr
+
 from z3c.pt import pagetemplate
+from z3c.pt import expressions
+
+from .expressions import PathExpr
+from .expressions import ProviderExpr
+from .expressions import NocallExpr
+from .expressions import ExistsExpr
+from .expressions import PythonExpr as SecurePythonExpr
 
 
 def get_physical_root(context):
@@ -41,6 +52,16 @@ class BaseTemplate(pagetemplate.BaseTemplate):
     utility_builtins = {}
     encoding = 'utf-8'
 
+    expression_types = {
+        'python': SecurePythonExpr,
+        'string': StringExpr,
+        'not': NotExpr,
+        'exists': ExistsExpr,
+        'path': PathExpr,
+        'provider': ProviderExpr,
+        'nocall': NocallExpr,
+        }
+
     def render_macro(self, macro, parameters=None, **kw):
         context = self._pt_get_context(None, None)
 
@@ -64,8 +85,6 @@ class BaseTemplate(pagetemplate.BaseTemplate):
                 nothing=None,
                 same_type=same_type,
                 test=test,
-                path=pagetemplate.evaluate_path,
-                exists=pagetemplate.evaluate_exists,
                 root=get_physical_root(context),
                 user=getSecurityManager().getUser(),
                 modules=SecureModuleImporter,
@@ -83,6 +102,16 @@ class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
 
 
 class ViewPageTemplate(pagetemplate.ViewPageTemplate):
+
+    expression_types = {
+        'python': PythonExpr,
+        'string': StringExpr,
+        'not': NotExpr,
+        'exists': ExistsExpr,
+        'path': PathExpr,
+        'provider': ProviderExpr,
+        'nocall': NocallExpr,
+        }
 
     encoding = 'UTF-8'
 
@@ -110,8 +139,6 @@ class ViewPageTemplate(pagetemplate.ViewPageTemplate):
                 here=context,
                 container=context,
                 nothing=None,
-                path=pagetemplate.evaluate_path,
-                exists=pagetemplate.evaluate_exists,
                 root=get_physical_root(context),
                 user=getSecurityManager().getUser(),
                 modules=SecureModuleImporter,

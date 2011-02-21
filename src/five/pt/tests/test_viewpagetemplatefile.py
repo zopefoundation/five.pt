@@ -4,7 +4,6 @@ from Products.Five import BrowserView
 from Testing.ZopeTestCase import ZopeTestCase
 
 from five.pt.pagetemplate import ViewPageTemplateFile
-from five.pt.pagetemplate import BaseTemplateFile
 
 
 class SimpleView(BrowserView):
@@ -16,11 +15,6 @@ class LocalsView(BrowserView):
         return 'yes'
 
     index = ViewPageTemplateFile('locals.pt')
-
-
-class LocalsBaseView(BrowserView):
-
-    index = BaseTemplateFile('locals_base.pt')
 
 
 class OptionsView(BrowserView):
@@ -61,14 +55,9 @@ class TestPageTemplateFile(ZopeTestCase):
         try:
             result = view.index()
         except Unauthorized:
-            pass
+            self.fail("Unexpected exception.")
         else:
-            self.fail("Expected unauthorized.")
-
-        from AccessControl.SecurityInfo import allow_module
-        allow_module("cgi")
-        result = view.index()
-        self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
+            self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
 
     def test_locals(self):
         view = LocalsView(self.folder, self.folder.REQUEST)
@@ -81,13 +70,6 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless("root:(\'\',)" in result)
         self.failUnless("nothing:None" in result)
         self.failUnless("rfc822" in result)
-
-    def test_locals_base(self):
-        view = LocalsBaseView(self.folder, self.folder.REQUEST)
-        result = view.index()
-        self.failUnless('here==context:True' in result)
-        self.failUnless('container==None:True' in result)
-        self.failUnless("nothing:None" in result)
 
     def test_options(self):
         view = OptionsView(self.folder, self.folder.REQUEST)
