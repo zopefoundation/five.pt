@@ -38,4 +38,7 @@ class TestPageTemplateFile(ZopeTestCase):
         from AccessControl.SecurityInfo import allow_module
         allow_module("cgi")
         result = template(soup=soup)
-        self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
+        self.failUnless(
+            '&amp;lt;foo&amp;gt;&amp;lt;/bar&amp;gt;\n' in result
+        )
+

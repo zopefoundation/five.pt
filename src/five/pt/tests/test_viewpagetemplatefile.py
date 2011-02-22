@@ -57,7 +57,9 @@ class TestPageTemplateFile(ZopeTestCase):
         except Unauthorized:
             self.fail("Unexpected exception.")
         else:
-            self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
+            self.failUnless(
+                '&amp;lt;foo&amp;gt;&amp;lt;/bar&amp;gt;\n' in result
+                )
 
     def test_locals(self):
         view = LocalsView(self.folder, self.folder.REQUEST)
