@@ -37,6 +37,19 @@ simple_i18n = """
 </tal:block>
 """.strip()
 
+options_capture_update_base = """
+<metal:use use-macro="context/macro_outer/macros/master">
+  <metal:fills fill-slot="main_slot">
+    <tal:block define="dummy python: capture.update(%s)" />
+  </metal:fills>
+</metal:use>
+""".strip()
+
+def generate_capture_source(names):
+    params = ", ".join("%s=%s" % (name, name)
+                       for name in names)
+    return options_capture_update_base % (params,)
+
 class TestPersistent(ZopeTestCase):
     def afterSetUp(self):
         from Products.Five import zcml
@@ -64,3 +77,23 @@ class TestPersistent(ZopeTestCase):
         inner = self._makeOne('macro_inner', macro_inner)
         result = inner().strip()
         self.assertEqual(result, u'Inner Slot')
+
+    def test_pt_render_with_macro(self):
+        # The pt_render method of ZopePageTemplates allows rendering the
+        # template with an expanded (and overriden) set of context
+        # variables.
+        # It's also used to retrieve the unrendered source for TTW
+        # editing purposes.
+        # Lets test with some common and some unique variables:
+        extra_context = dict(form=object(),
+                             context=self.folder,
+                             here=object(),)
+        capture = dict((name, None) for name in extra_context)
+        source = generate_capture_source(capture)
+        self._makeOne('macro_outer', macro_outer)
+        template = self._makeOne('test_pt_render', source)
+        self.assertEqual(template.pt_render(source=True), source)
+        extra_context['capture'] = capture
+        template.pt_render(extra_context=extra_context)
+        del extra_context['capture']
+        self.assertEquals(extra_context, capture)

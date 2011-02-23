@@ -23,6 +23,9 @@ from .expressions import ExistsExpr
 from .expressions import PythonExpr as SecurePythonExpr
 
 
+EXTRA_CONTEXT_KEY = '__five_pt_extra_context'
+
+
 def get_physical_root(context):
     method = aq_get(context, 'getPhysicalRoot', None)
     if method is not None:
@@ -72,11 +75,13 @@ class BaseTemplate(pagetemplate.BaseTemplate):
             macro, parameters=context, **kw)
 
     def _pt_get_context(self, instance, request, kwargs={}):
-        if instance is None:
-            namespace = {}
-        else:
+        extra_context = kwargs.pop(EXTRA_CONTEXT_KEY, {})
+        namespace = dict(self.utility_builtins)
+
+        if instance is not None:
+            # instance namespace overrides utility_builtins
             context = aq_parent(instance)
-            namespace = dict(
+            namespace.update(
                 context=context,
                 request=request or aq_get(instance, 'REQUEST', None),
                 template=self,
@@ -91,8 +96,8 @@ class BaseTemplate(pagetemplate.BaseTemplate):
                 DateTime=DateTime,
                 options=kwargs)
 
-        for name, value in self.utility_builtins.items():
-            namespace.setdefault(name, value)
+        # extra_context (from pt_render()) overrides the default namespace
+        namespace.update(extra_context)
 
         return namespace
 

@@ -20,6 +20,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
 from five.pt.pagetemplate import ViewPageTemplateFile
 from five.pt.pagetemplate import BaseTemplate
 from five.pt.pagetemplate import BaseTemplateFile
+from five.pt.pagetemplate import EXTRA_CONTEXT_KEY
 
 from Acquisition import aq_base
 from Acquisition import aq_parent
@@ -87,8 +88,18 @@ def _get_five_pt_template_wrapped(self):
     return template
 
 def call_template(self, *args, **kw):
+    # avoid accidental exposure of the extra context
+    kw.pop(EXTRA_CONTEXT_KEY, None)
     template = self._get_five_pt_template()
     return template(self, *args, **kw)
+
+def pt_render(self, source=False, extra_context=None):
+    if source:
+        return self._text
+    if extra_context is None:
+        extra_context = {}
+    template = self._get_five_pt_template()
+    return template(self, **{EXTRA_CONTEXT_KEY:extra_context})
 
 def _get_five_pt_template_file_wrapped(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
@@ -117,6 +128,7 @@ PageTemplateFile.__call__ = call_template
 PageTemplateFile.macros = property(get_macros)
 ZopePageTemplate._get_five_pt_template = _get_five_pt_template_wrapped
 ZopePageTemplate._bindAndExec = call_template
+ZopePageTemplate.pt_render = pt_render
 ZopePageTemplate.macros = ComputedAttribute(get_macros, 1)
 
 try:
