@@ -29,7 +29,7 @@ macro_inner = """
 </metal:use>
 """.strip()
 
-class TestPageTemplateFile(ZopeTestCase):
+class TestPersistent(ZopeTestCase):
     def afterSetUp(self):
         from Products.Five import zcml
         import Products.Five
@@ -38,7 +38,6 @@ class TestPageTemplateFile(ZopeTestCase):
         zcml.load_config("configure.zcml", Products.Five)
         zcml.load_config("configure.zcml", five.pt)
         zcml.load_config("configure.zcml", z3c.pt)
-        #import IPython;IPython.Shell.IPShellEmbed(())()
         self.setRoles(['Manager'])
 
     def _makeOne(self, template_id, source):
