@@ -69,26 +69,30 @@ def get_bound_template(self, instance, type):
     return BoundPageTemplate(template, instance)
 
 
-def call_template(self, *args, **kw):
+def _get_five_pt_template(self):
     template = getattr(self, '_v_template', _marker)
     if template is _marker or self._text != template.source:
         self._v_template = template = BaseTemplate(self._text, keep_source=True)
 
-    return template(self, *args, **kw)
+    return template
 
-
-def call_template_and_wrap(self, *args, **kw):
-    template = getattr(self, '_v_template', _marker)
-    if template is _marker or self._text != template.source:
-        self._v_template = template = BaseTemplate(self._text, keep_source=True)
+def _get_five_pt_template_wrapped(self):
+    template = _get_five_pt_template(self)
 
     if IAcquirer.providedBy(template):
         template = template.__of__(aq_parent(self))
     else:
         template = ImplicitAcquisitionWrapper(template, aq_parent(self))
 
+    return template
+
+def call_template(self, *args, **kw):
+    template = self._get_five_pt_template()
     return template(self, *args, **kw)
 
+def call_template_and_wrap(self, *args, **kw):
+    template = self._get_five_pt_template_wrapped()
+    return template(self, *args, **kw)
 
 def call_template_file(self, *args, **kw):
     template = getattr(self, '_v_template', _marker)
@@ -104,6 +108,10 @@ def call_template_file(self, *args, **kw):
 
 
 def get_macros(self):
+    template = self._get_five_pt_template_wrapped()
+    return template.macros
+
+def get_macros_file(self):
     template = getattr(self, '_v_template', _marker)
     if template is _marker:
         self._v_template = template = BaseTemplateFile(self.filename)
@@ -116,10 +124,12 @@ def get_macros(self):
 FiveViewPageTemplateFile.__get__ = get_bound_template
 ZopeViewPageTemplateFile.__get__ = get_bound_template
 PageTemplate.__call__ = call_template
+PageTemplate._get_five_pt_template = _get_five_pt_template
 PageTemplate.macros = ComputedAttribute(get_macros, 1)
 PageTemplateFile.__call__ = call_template_file
-PageTemplateFile.macros = property(get_macros)
-ZopePageTemplate.__call__ = call_template_and_wrap
+PageTemplateFile.macros = property(get_macros_file)
+ZopePageTemplate._get_five_pt_template_wrapped = _get_five_pt_template_wrapped
+ZopePageTemplate._bindAndExec = call_template_and_wrap
 ZopePageTemplate.macros = ComputedAttribute(get_macros, 1)
 
 try:
