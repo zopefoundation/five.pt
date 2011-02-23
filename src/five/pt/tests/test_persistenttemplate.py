@@ -24,9 +24,17 @@ macro_middle = """
 macro_inner = """
 <metal:use use-macro="here/macro_middle/macros/master">
   <metal:fills fill-slot="main_slot">
-    Inner Slot
+    <tal:block i18n:domain="mydomain" i18n:translate="">
+      Inner Slot
+    </tal:block>
   </metal:fills>
 </metal:use>
+""".strip()
+
+simple_i18n = """
+<tal:block i18n:domain="mydomain" i18n:translate="">
+  Hello, World
+</tal:block>
 """.strip()
 
 class TestPersistent(ZopeTestCase):
@@ -44,14 +52,13 @@ class TestPersistent(ZopeTestCase):
         return manage_addPageTemplate(self.folder, template_id, text=source)
 
     def test_simple(self):
-        template = self._makeOne('foo',
-                                 '<tal:block content="string:Hello, World" />')
-        result = template()
+        template = self._makeOne('foo', simple_i18n)
+        result = template().strip()
         self.assertEqual(result, u'Hello, World')
         # check that it's editable
         template.pt_editForm()
 
-    def test_macro(self):
+    def test_macro_with_i18n(self):
         self._makeOne('macro_outer', macro_outer)
         self._makeOne('macro_middle', macro_middle)
         inner = self._makeOne('macro_inner', macro_inner)
