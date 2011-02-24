@@ -28,6 +28,17 @@ from Acquisition.interfaces import IAcquirer
 from Acquisition import ImplicitAcquisitionWrapper
 
 from ComputedAttribute import ComputedAttribute
+from AccessControl.SecurityInfo import ClassSecurityInfo
+from App.class_init import InitializeClass
+
+# declare Chameleon's repeatdict public
+from chameleon.tal import RepeatDict
+
+RepeatDict.security = ClassSecurityInfo()
+RepeatDict.security.declareObjectPublic()
+RepeatDict.__allow_access_to_unprotected_subobjects__ = True
+
+InitializeClass(RepeatDict)
 
 try:
     from Products.Five.browser.pagetemplatefile import BoundPageTemplate
@@ -72,7 +83,7 @@ def get_bound_template(self, instance, type):
 
 def _get_five_pt_template(self):
     template = getattr(self, '_v_template', _marker)
-    if template is _marker or self._text != template.source:
+    if template is _marker or self._text != template.body:
         self._v_template = template = BaseTemplate(self._text, keep_source=True)
 
     return template
@@ -88,7 +99,7 @@ def _get_five_pt_template_wrapped(self):
     return template
 
 def call_template(self, *args, **kw):
-    # avoid accidental exposure of the extra context
+    # avoid accidental exposure of the extra context parameter
     kw.pop(EXTRA_CONTEXT_KEY, None)
     template = self._get_five_pt_template()
     return template(self, *args, **kw)

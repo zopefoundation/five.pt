@@ -49,8 +49,8 @@ def test(condition, a, b):
     return b
 
 
-class BaseTemplate(pagetemplate.BaseTemplate):
-    """Zope 2-compatible page template class."""
+class BaseTemplateBase(pagetemplate.BaseTemplate):
+    """Base for Zope 2-compatible page template classes."""
 
     utility_builtins = {}
     encoding = 'utf-8'
@@ -101,8 +101,15 @@ class BaseTemplate(pagetemplate.BaseTemplate):
 
         return namespace
 
+class BaseTemplate(BaseTemplateBase):
+    """Zope 2-compatible page template class."""
 
-class BaseTemplateFile(BaseTemplate, pagetemplate.BaseTemplateFile):
+    def __init__(self, body, *args, **kw):
+        super(BaseTemplate, self).__init__(body, *args, **kw)
+        # keep the body for comparison and caching purposes
+        self.body = body
+
+class BaseTemplateFile(BaseTemplateBase, pagetemplate.BaseTemplateFile):
     """Zope 2-compatible page template file class."""
 
 

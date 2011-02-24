@@ -37,6 +37,11 @@ simple_i18n = """
 </tal:block>
 """.strip()
 
+repeat_object = """
+<tal:loop repeat="counter python: range(3)" 
+          content="python: repeat['counter'].index" />
+""".strip()
+
 options_capture_update_base = """
 <metal:use use-macro="context/macro_outer/macros/master">
   <metal:fills fill-slot="main_slot">
@@ -49,6 +54,8 @@ def generate_capture_source(names):
     params = ", ".join("%s=%s" % (name, name)
                        for name in names)
     return options_capture_update_base % (params,)
+
+_marker = object()
 
 class TestPersistent(ZopeTestCase):
     def afterSetUp(self):
@@ -97,3 +104,27 @@ class TestPersistent(ZopeTestCase):
         template.pt_render(extra_context=extra_context)
         del extra_context['capture']
         self.assertEquals(extra_context, capture)
+
+    def test_avoid_recompilation(self):
+        template = self._makeOne('foo', simple_i18n)
+        macro_outer = self._makeOne('macro_outer', simple_i18n)
+        # templates are only compiled after the first call
+        self.assertEqual(getattr(template, '_v_template', _marker), _marker)
+        template()
+        # or the first fetching of macros
+        self.assertEqual(getattr(macro_outer, '_v_template', _marker), _marker)
+        macro_outer.macros
+
+        template_compiled = template._v_template
+        macro_outer_compiled = macro_outer._v_template
+
+        # but they should not be recompiled afterwards
+        template()
+        macro_outer.macros
+        self.assertTrue(template_compiled is template._v_template)
+        self.assertTrue(macro_outer_compiled is macro_outer._v_template)
+
+    def test_repeat_object_security(self):
+        template = self._makeOne('foo', repeat_object)
+        # this should not raise an Unauthorized error
+        self.assertEquals(template().strip().split(), u'0 1 2'.split())
