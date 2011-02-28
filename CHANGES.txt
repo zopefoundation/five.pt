@@ -1,15 +1,15 @@
 Changelog
 =========
 
-In next release ...
+2.0-rc1 (2011-02-28)
+~~~~~~~~~~~~~~~~~~~~
 
 - Update to Chameleon 2.0.
 
   This release includes many changes and is a complete rewrite of the
   1.x series.
 
-  Note that Python 2.7+ is now required.
-
+  Note that Python 2.5+ is now required.
   [malthe]
 
 - Python-expressions are now subject to access-control security.
