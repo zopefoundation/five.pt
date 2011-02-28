@@ -50,6 +50,10 @@ options_capture_update_base = """
 </metal:use>
 """.strip()
 
+python_path_source = """
+<form tal:attributes="method python:path('context/method')" />
+""".strip()
+
 def generate_capture_source(names):
     params = ", ".join("%s=%s" % (name, name)
                        for name in names)
@@ -129,3 +133,9 @@ class TestPersistent(ZopeTestCase):
         template = self._makeOne('foo', repeat_object)
         # this should not raise an Unauthorized error
         self.assertEquals(template().strip().split(), u'0 1 2'.split())
+
+    def test_path_function(self):
+        # check that the "path" function inside a python expression works
+        self.folder.method = 'post'
+        template = self._makeOne('foo', python_path_source)
+        self.assertEquals(template(), u'<form method="post" />')
