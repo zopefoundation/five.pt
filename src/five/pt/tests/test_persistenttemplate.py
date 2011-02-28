@@ -107,22 +107,23 @@ class TestPersistent(ZopeTestCase):
 
     def test_avoid_recompilation(self):
         template = self._makeOne('foo', simple_i18n)
-        macro_outer = self._makeOne('macro_outer', simple_i18n)
+        macro_template = self._makeOne('macro_outer', macro_outer)
         # templates are only compiled after the first call
         self.assertEqual(getattr(template, '_v_template', _marker), _marker)
         template()
         # or the first fetching of macros
-        self.assertEqual(getattr(macro_outer, '_v_template', _marker), _marker)
-        macro_outer.macros
+        self.assertEqual(getattr(macro_template, '_v_template', _marker),
+                         _marker)
+        macro_template.macros
 
         template_compiled = template._v_template
-        macro_outer_compiled = macro_outer._v_template
+        macro_template_compiled = macro_template._v_template
 
         # but they should not be recompiled afterwards
         template()
-        macro_outer.macros
+        macro_template.macros
         self.assertTrue(template_compiled is template._v_template)
-        self.assertTrue(macro_outer_compiled is macro_outer._v_template)
+        self.assertTrue(macro_template_compiled is macro_template._v_template)
 
     def test_repeat_object_security(self):
         template = self._makeOne('foo', repeat_object)
