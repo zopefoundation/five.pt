@@ -89,8 +89,6 @@ class TestPersistent(ZopeTestCase):
         # The pt_render method of ZopePageTemplates allows rendering the
         # template with an expanded (and overriden) set of context
         # variables.
-        # It's also used to retrieve the unrendered source for TTW
-        # editing purposes.
         # Lets test with some common and some unique variables:
         extra_context = dict(form=object(),
                              context=self.folder,
@@ -99,11 +97,13 @@ class TestPersistent(ZopeTestCase):
         source = generate_capture_source(capture)
         self._makeOne('macro_outer', macro_outer)
         template = self._makeOne('test_pt_render', source)
-        self.assertEqual(template.pt_render(source=True), source)
         extra_context['capture'] = capture
         template.pt_render(extra_context=extra_context)
         del extra_context['capture']
         self.assertEquals(extra_context, capture)
+        # pt_render is also used to retrieve the unrendered source for
+        # TTW editing purposes.
+        self.assertEqual(template.pt_render(source=True), source)
 
     def test_avoid_recompilation(self):
         template = self._makeOne('foo', simple_i18n)
