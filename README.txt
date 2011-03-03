@@ -8,7 +8,7 @@ common API.
 Support for browser pages, viewlets and viewlet managers is included.
 
 Usage
------
+~~~~~
 
 To enable Chameleon, simply include the ZCML configuration::
 
