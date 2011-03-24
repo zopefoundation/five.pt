@@ -7,6 +7,8 @@ from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from AccessControl import getSecurityManager
+from App.config import getConfiguration
+
 from Products.PageTemplates.Expressions import SecureModuleImporter
 
 from chameleon.tales import StringExpr
@@ -65,6 +67,10 @@ class BaseTemplateBase(pagetemplate.BaseTemplate):
         'nocall': NocallExpr,
         }
 
+    # We enable template reload setting in application debug-mode
+    if getConfiguration().debug_mode:
+        auto_reload = True
+
     def render_macro(self, macro, parameters=None, **kw):
         context = self._pt_get_context(None, None)
 
@@ -113,7 +119,7 @@ class BaseTemplateFile(BaseTemplateBase, pagetemplate.BaseTemplateFile):
     """Zope 2-compatible page template file class."""
 
 
-class ViewPageTemplate(pagetemplate.ViewPageTemplate):
+class ViewPageTemplate(pagetemplate.ViewPageTemplate, BaseTemplateBase):
 
     expression_types = {
         'python': PythonExpr,

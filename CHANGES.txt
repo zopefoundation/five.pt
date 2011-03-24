@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next release...
+
+- Set default reload mode to the Zope 2 application server
+  configuration's ``debug_mode`` value.
+  [malthe]
+
 2.0-rc1 (2011-02-28)
 ~~~~~~~~~~~~~~~~~~~~
 
