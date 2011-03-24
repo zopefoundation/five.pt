@@ -57,9 +57,7 @@ class TestPageTemplateFile(ZopeTestCase):
         except Unauthorized:
             self.fail("Unexpected exception.")
         else:
-            self.failUnless(
-                '&amp;lt;foo&amp;gt;&amp;lt;/bar&amp;gt;\n' in result
-                )
+            self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
 
     def test_locals(self):
         view = LocalsView(self.folder, self.folder.REQUEST)
@@ -70,7 +68,7 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless('here==context:True' in result)
         self.failUnless('here==container:True' in result)
         self.failUnless("root:(\'\',)" in result)
-        self.failUnless("nothing:None" in result)
+        self.failUnless("nothing:" in result)
         self.failUnless("rfc822" in result)
 
     def test_options(self):

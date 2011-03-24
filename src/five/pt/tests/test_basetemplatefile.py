@@ -17,7 +17,7 @@ class TestPageTemplateFile(ZopeTestCase):
         result = template()
         self.failUnless('here==context:True' in result)
         self.failUnless('container==None:True' in result)
-        self.failUnless("nothing:None" in result)
+        self.failUnless("nothing:" in result)
 
     def test_simple(self):
         template = BaseTemplateFile("simple.pt")
@@ -38,7 +38,4 @@ class TestPageTemplateFile(ZopeTestCase):
         from AccessControl.SecurityInfo import allow_module
         allow_module("cgi")
         result = template(soup=soup)
-        self.failUnless(
-            '&amp;lt;foo&amp;gt;&amp;lt;/bar&amp;gt;\n' in result
-        )
-
+        self.failUnless('&lt;foo&gt;&lt;/bar&gt;' in result)
