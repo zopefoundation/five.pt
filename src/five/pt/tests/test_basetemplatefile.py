@@ -19,6 +19,22 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless('container==None:True' in result)
         self.failUnless("nothing:" in result)
 
+    def test_nocall(self):
+        template = BaseTemplateFile("nocall.pt")
+
+        def dont_call():
+            raise RuntimeError()
+        result = template(callable=dont_call)
+        self.failUnless(repr(dont_call) in result)
+
+    def test_exists(self):
+        template = BaseTemplateFile("exists.pt")
+
+        def dont_call():
+            raise RuntimeError()
+        result = template(callable=dont_call)
+        self.failUnless('ok' in result)
+
     def test_simple(self):
         template = BaseTemplateFile("simple.pt")
         result = template()
