@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release...
+2.0-rc2 (2011-05-24)
+~~~~~~~~~~~~~~~~~~~~
 
 - Have the base template class implement ``IPageTemplate`` from
   ``zope.pagetemplate``. This interface is relied on for a number of
