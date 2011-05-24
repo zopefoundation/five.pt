@@ -3,6 +3,12 @@ Changelog
 
 In next release...
 
+- Have the base template class implement ``IPageTemplate`` from
+  ``zope.pagetemplate``. This interface is relied on for a number of
+  adapter registrations and the missing interface declaration affects
+  packages such as ``plone.caching``.
+  [malthe]
+
 - Set default reload mode to the Zope 2 application server
   configuration's ``debug_mode`` value.
   [malthe]

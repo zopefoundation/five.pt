@@ -2,6 +2,8 @@ import os
 
 from DateTime import DateTime
 from zope.app.pagetemplate.viewpagetemplatefile import ViewMapper
+from zope.interface import implements
+from zope.pagetemplate.interfaces import IPageTemplate
 
 from Acquisition import aq_get
 from Acquisition import aq_inner
@@ -53,6 +55,8 @@ def test(condition, a, b):
 
 class BaseTemplateBase(pagetemplate.BaseTemplate):
     """Base for Zope 2-compatible page template classes."""
+
+    implements(IPageTemplate)
 
     utility_builtins = {}
     encoding = 'utf-8'
