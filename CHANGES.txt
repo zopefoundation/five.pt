@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release ...
+2.0-rc3 (2011-07-07)
+~~~~~~~~~~~~~~~~~~~~
 
 - Refactor custom Python expression implementation to use the
   ``parse`` method. This builds directly on the base implementation
