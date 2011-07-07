@@ -1,6 +1,13 @@
 Changelog
 =========
 
+In next release ...
+
+- Refactor custom Python expression implementation to use the
+  ``parse`` method. This builds directly on the base implementation
+  and its behavior.
+  [malthe]
+
 2.0-rc2 (2011-05-24)
 ~~~~~~~~~~~~~~~~~~~~
 

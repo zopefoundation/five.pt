@@ -26,7 +26,7 @@ setup(name='five.pt',
       install_requires=[
           'setuptools',
           'z3c.pt>=2.0-rc1',
-          'Chameleon>=2.0-rc9',
+          'Chameleon>=2.0-rc13',
           'sourcecodegen',
       ],
       entry_points="""

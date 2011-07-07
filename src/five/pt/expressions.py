@@ -1,4 +1,3 @@
-from ast import Assign
 from ast import NodeTransformer
 from compiler import parse as ast24_parse
 
@@ -25,11 +24,8 @@ from AccessControl.ZopeGuards import protected_inplacevar
 
 from chameleon.astutil import Symbol
 from chameleon.astutil import Static
-from chameleon.astutil import parse
 from chameleon.codegen import template
-from chameleon.tales import TalesExpr
 from chameleon.utils import decode_htmlentities
-from chameleon.exc import ExpressionError
 from sourcecodegen import generate_code
 
 from z3c.pt import expressions
@@ -172,26 +168,15 @@ class RestrictionTransform(NodeTransformer):
         return node
 
 
-class PythonExpr(TalesExpr):
+class PythonExpr(expressions.PythonExpr):
     rm = RestrictionMutator()
     rt = RestrictionTransform()
 
-    def __init__(self, expression):
-        self.expression = expression
-
-    def __call__(self, target, engine):
-        string = self.expression.strip().replace('\n', ' ')
+    def parse(self, string):
         decoded = decode_htmlentities(string)
-
         node = ast24_parse(decoded, 'eval').node
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
-
-        try:
-            value = parse(string, 'eval').body
-        except SyntaxError as exc:
-            raise ExpressionError(exc.msg, decoded)
-
+        value = super(PythonExpr, self).parse(string)
         self.rt.visit(value)
-
-        return [Assign([target], value)]
+        return value
