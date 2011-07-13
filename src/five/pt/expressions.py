@@ -24,6 +24,7 @@ from AccessControl.ZopeGuards import protected_inplacevar
 
 from chameleon.astutil import Symbol
 from chameleon.astutil import Static
+from chameleon.astutil import NameLookupRewriteVisitor
 from chameleon.codegen import template
 from chameleon.utils import decode_htmlentities
 from sourcecodegen import generate_code
@@ -168,15 +169,24 @@ class RestrictionTransform(NodeTransformer):
         return node
 
 
-class PythonExpr(expressions.PythonExpr):
+class SecurePythonExpr(expressions.PythonExpr):
     rm = RestrictionMutator()
     rt = RestrictionTransform()
+
+    def _dynamic_transform(node):
+        if node.id == 'repeat':
+            node.id = 'wrapped_repeat'
+
+        return node
+
+    nt = NameLookupRewriteVisitor(_dynamic_transform)
 
     def parse(self, string):
         decoded = decode_htmlentities(string)
         node = ast24_parse(decoded, 'eval').node
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
-        value = super(PythonExpr, self).parse(string)
+        value = super(SecurePythonExpr, self).parse(string)
         self.rt.visit(value)
+        self.nt.visit(value)
         return value

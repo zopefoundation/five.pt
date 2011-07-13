@@ -1,5 +1,9 @@
+import os
+
 from Testing.ZopeTestCase import ZopeTestCase
-from five.pt.pagetemplate import BaseTemplateFile
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+
+path = os.path.dirname(__file__)
 
 
 class TestPageTemplateFile(ZopeTestCase):
@@ -12,15 +16,17 @@ class TestPageTemplateFile(ZopeTestCase):
         zcml.load_config("configure.zcml", five.pt)
         zcml.load_config("configure.zcml", z3c.pt)
 
+    def _makeOne(self, name):
+        return PageTemplateFile(os.path.join(path, name)).\
+               __of__(self.app)
+
     def test_locals_base(self):
-        template = BaseTemplateFile('locals_base.pt')
+        template = self._makeOne('locals_base.pt')
         result = template()
-        self.failUnless('here==context:True' in result)
-        self.failUnless('container==None:True' in result)
-        self.failUnless("nothing:" in result)
+        self.failUnless('Application' in result)
 
     def test_nocall(self):
-        template = BaseTemplateFile("nocall.pt")
+        template = self._makeOne("nocall.pt")
 
         def dont_call():
             raise RuntimeError()
@@ -28,7 +34,7 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless(repr(dont_call) in result)
 
     def test_exists(self):
-        template = BaseTemplateFile("exists.pt")
+        template = self._makeOne("exists.pt")
 
         def dont_call():
             raise RuntimeError()
@@ -36,13 +42,13 @@ class TestPageTemplateFile(ZopeTestCase):
         self.failUnless('ok' in result)
 
     def test_simple(self):
-        template = BaseTemplateFile("simple.pt")
+        template = self._makeOne("simple.pt")
         result = template()
         self.failUnless('Hello world!' in result)
 
     def test_secure(self):
         soup = '<foo></bar>'
-        template = BaseTemplateFile("secure.pt")
+        template = self._makeOne("secure.pt")
         from zExceptions import Unauthorized
         try:
             result = template(soup=soup)

@@ -1,176 +1,142 @@
-"""Monkey-patching page template classes.
+"""Patch legacy template classes.
 
-Since many templates are instantiated at module-import, we patch using
-a duck-typing strategy.
-
-We replace the ``__get__``-method of the ViewPageTemplateFile class
-(both the Five variant and the base class). This allows us to return a
-Chameleon template instance, transparent to the calling class.
+We patch the ``TALInterpreter`` class as well as the cook-method on
+the pagetemplate base class (which produces the input for the TAL
+interpreter).
 """
 
-from zope.app.pagetemplate.viewpagetemplatefile import (
-    ViewPageTemplateFile as ZopeViewPageTemplateFile)
+import sys
 
-from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PageTemplates.PageTemplateFile import PageTemplate
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile as \
-     FiveViewPageTemplateFile
+from zope.tal.talinterpreter import TALInterpreter
+from zope.pagetemplate.pagetemplate import PageTemplate
+from z3c.pt.pagetemplate import PageTemplate as ChameleonPageTemplate
+from z3c.pt.pagetemplate import PageTemplateFile as ChameleonPageTemplateFile
 
-from five.pt.pagetemplate import ViewPageTemplateFile
-from five.pt.pagetemplate import BaseTemplate
-from five.pt.pagetemplate import BaseTemplateFile
-from five.pt.pagetemplate import EXTRA_CONTEXT_KEY
-
-from Acquisition import aq_base
-from Acquisition import aq_parent
-from Acquisition.interfaces import IAcquirer
-from Acquisition import ImplicitAcquisitionWrapper
-
-from ComputedAttribute import ComputedAttribute
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
+from Products.PageTemplates.Expressions import getEngine
 
-# declare Chameleon's repeatdict public
+from chameleon.tales import StringExpr
+from chameleon.tales import NotExpr
+from chameleon.tales import PythonExpr
 from chameleon.tal import RepeatDict
 
+from .expressions import PathExpr
+from .expressions import ProviderExpr
+from .expressions import NocallExpr
+from .expressions import ExistsExpr
+from .expressions import SecurePythonExpr
+
+
+# Declare Chameleon's repeat dictionary public
 RepeatDict.security = ClassSecurityInfo()
 RepeatDict.security.declareObjectPublic()
 RepeatDict.__allow_access_to_unprotected_subobjects__ = True
 
 InitializeClass(RepeatDict)
 
-try:
-    from Products.Five.browser.pagetemplatefile import BoundPageTemplate
-except ImportError:
-    from zope.app.pagetemplate.viewpagetemplatefile import BoundPageTemplate
-    import Acquisition
-
-    class BoundPageTemplate(BoundPageTemplate, Acquisition.Implicit):
-        """Implementing Acquisition.interfaces.IAcquirer and
-        IAcquisitionWrapper.
-        """
-
-        __parent__ = property(lambda self: self.im_self)
-
-        def __call__(self, im_self=None, *args, **kw):
-            if self.im_self is None:
-                im_self = im_self
-            else:
-                im_self = aq_base(self.im_self)
-                if IAcquirer.providedBy(im_self):
-                    im_self = im_self.__of__(im_self.context)
-            return self.im_func(im_self, *args, **kw)
-
-    class BaseTemplateFile(BaseTemplateFile, Acquisition.Implicit):
-        """Implement Acquisition.interfaces.IAcquirer and
-        IAcquisitionWrapper.
-        """
-
-_marker = object()
+# Zope 2 Page Template expressions
+_secure_expression_types = {
+    'python': SecurePythonExpr,
+    'string': StringExpr,
+    'not': NotExpr,
+    'exists': ExistsExpr,
+    'path': PathExpr,
+    'provider': ProviderExpr,
+    'nocall': NocallExpr,
+    }
 
 
-def get_bound_template(self, instance, type):
-    if instance is None:
-        return self
+# Zope 3 Page Template expressions
+_expression_types = {
+    'python': PythonExpr,
+    'string': StringExpr,
+    'not': NotExpr,
+    'exists': ExistsExpr,
+    'path': PathExpr,
+    'provider': ProviderExpr,
+    'nocall': NocallExpr,
+    }
 
-    template = getattr(self, '_v_template', _marker)
-    if template is _marker:
-        self._v_template = template = ViewPageTemplateFile(self.filename)
 
-    return BoundPageTemplate(template, instance)
+def cook(self):
+    engine = self.pt_getEngine()
 
+    filename = getattr(self, 'filename', None)
 
-def _get_five_pt_template(self):
-    template = getattr(self, '_v_template', _marker)
-    if template is _marker or self._text != template.body:
-        self._v_template = template = BaseTemplate(self._text, keep_source=True)
-
-    return template
-
-def _get_five_pt_template_wrapped(self):
-    template = _get_five_pt_template(self)
-
-    if IAcquirer.providedBy(template):
-        template = template.__of__(aq_parent(self))
+    if engine is getEngine():
+        expression_types = _secure_expression_types
     else:
-        template = ImplicitAcquisitionWrapper(template, aq_parent(self))
+        expression_types = _expression_types
 
-    return template
-
-def call_template(self, *args, **kw):
-    # avoid accidental exposure of the extra context parameter
-    kw.pop(EXTRA_CONTEXT_KEY, None)
-    template = self._get_five_pt_template()
-    return template(self, *args, **kw)
-
-def pt_render(self, source=False, extra_context=None):
-    if source:
-        return self._text
-    if extra_context is None:
-        extra_context = {}
-    template = self._get_five_pt_template()
-    return template(self, **{EXTRA_CONTEXT_KEY:extra_context})
-
-def _get_five_pt_template_file_wrapped(self, *args, **kw):
-    template = getattr(self, '_v_template', _marker)
-    if template is _marker:
-        self._v_template = template = BaseTemplateFile(self.filename)
-
-    if IAcquirer.providedBy(template):
-        template = template.__of__(aq_parent(self))
+    if filename is None:
+        program = ChameleonPageTemplate(
+            self._text, keep_body=True,
+            expression_types=expression_types,
+            encoding='utf-8')
     else:
-        template = ImplicitAcquisitionWrapper(template, aq_parent(self))
+        program = ChameleonPageTemplateFile(
+            filename, keep_body=True,
+            expression_types=expression_types,
+            encoding='utf-8')
 
-    return template
+    self._v_program = program
+    self._v_macros = program.macros
+    self._v_cooked = 1
+
+    try:
+        program.cook_check()
+    except:
+        etype, e = sys.exc_info()[:2]
+        self._v_errors = [
+            "Compilation failed",
+            "%s.%s: %s" % (etype.__module__, etype.__name__, e)
+            ]
+    else:
+        self._v_errors = ()
 
 
-def get_macros(self):
-    template = self._get_five_pt_template()
-    return template.macros
+def test(condition, a, b):
+    if condition:
+        return a
+    return b
 
-FiveViewPageTemplateFile.__get__ = get_bound_template
-ZopeViewPageTemplateFile.__get__ = get_bound_template
-PageTemplate._get_five_pt_template = _get_five_pt_template
-PageTemplate.__call__ = call_template
-PageTemplate.macros = ComputedAttribute(get_macros, 1)
-PageTemplateFile._get_five_pt_template = _get_five_pt_template_file_wrapped
-PageTemplateFile.__call__ = call_template
-PageTemplateFile.macros = property(get_macros)
-ZopePageTemplate._get_five_pt_template = _get_five_pt_template_wrapped
-ZopePageTemplate._bindAndExec = call_template
-ZopePageTemplate.pt_render = pt_render
-ZopePageTemplate.macros = ComputedAttribute(get_macros, 1)
 
-try:
-    from five.grok.components import ZopeTwoPageTemplate
+@staticmethod
+def create_interpreter(cls, *args, **kwargs):
+    return ChameleonTALInterpreter(*args, **kwargs)
 
-    class GrokViewAwarePageTemplateFile(ViewPageTemplateFile):
 
-        def pt_getContext(self, instance, request, **kw):
-            return {}
+class ChameleonTALInterpreter(object):
+    def __init__(self, template, macros, context, stream, tal=True, **kwargs):
+        self.template = template
+        self.econtext = context.vars
+        self.repeat = context.repeat_vars
+        self.stream = stream
+        self.tal = tal
 
-        def _pt_get_context(self, instance, request, kwargs={}):
-            namespace = super(
-                GrokViewAwarePageTemplateFile, self)._pt_get_context(
-                instance, request, kwargs)
-            if hasattr(self, 'pt_grokContext'):
-                namespace.update(self.pt_grokContext)
-            return namespace
+    def __call__(self):
+        if self.tal is False:
+            result = self.template.body
+        else:
+            econtext = self.econtext
 
-        def pt_render(self, namespace):
-            self.pt_grokContext = namespace
-            # namespace contains self.pt_getContext() result + \
-            # five.grok.components.ZopeTwoPageTemplate.getNamespace(view)
-            # result we have currently context, request, static, and
-            # view in the dict
-            view = namespace["view"]
-            return self.__call__(_ob=view)
-            # z3c.pt.pagetemplate.ViewPageTemplate.__call__ will call
-            # self._pt_get_context(ob, None, None)
+            # Swap out repeat dictionary for Chameleon implementation
+            # and store wrapped dictionary in new variable -- this is
+            # in turn used by the secure Python expression
+            # implementation whenever a 'repeat' symbol is found
+            econtext['wrapped_repeat'] = econtext['repeat']
+            econtext['repeat'] = RepeatDict(self.repeat)
 
-    def setFromFilename(self, filename, _prefix=None):
-        self._template = GrokViewAwarePageTemplateFile(filename, _prefix)
-    ZopeTwoPageTemplate.setFromFilename = setFromFilename
-except ImportError:
-    pass
+            result = self.template.render(
+                path=self.template.evaluate_path,
+                exists=self.template.evaluate_exists,
+                test=test,
+                **econtext
+                )
+
+        self.stream.write(result)
+
+
+TALInterpreter.__new__ = create_interpreter
+PageTemplate._cook = cook

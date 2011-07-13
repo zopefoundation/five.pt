@@ -3,7 +3,7 @@ import unittest
 from Products.Five import BrowserView
 from Testing.ZopeTestCase import ZopeTestCase
 
-from five.pt.pagetemplate import ViewPageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
 class SimpleView(BrowserView):

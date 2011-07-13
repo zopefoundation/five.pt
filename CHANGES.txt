@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.1-dev (unreleased)
+~~~~~~~~~~~~~~~~~~~~
+
+- Major architectural change.
+
+  The package no longer contains own template classes; instead,
+  patches are made to switch from the reference TAL interpreter to the
+  Chameleon TAL compiler.
+  [malthe]
+
 2.0-rc3 (2011-07-07)
 ~~~~~~~~~~~~~~~~~~~~
 

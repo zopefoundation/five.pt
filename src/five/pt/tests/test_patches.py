@@ -11,7 +11,7 @@ class TestPatches(Sandboxed, ZopeTestCase):
         from Products.Five import zcml
         import Products.Five
         import z3c.pt
-        import five.pt.patches
+        import five.pt
         zcml.load_config("configure.zcml", Products.Five)
         zcml.load_config("configure.zcml", five.pt)
         zcml.load_config("configure.zcml", z3c.pt)

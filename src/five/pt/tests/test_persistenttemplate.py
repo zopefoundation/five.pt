@@ -120,14 +120,14 @@ class TestPersistent(ZopeTestCase):
                          _marker)
         macro_template.macros
 
-        template_compiled = template._v_template
-        macro_template_compiled = macro_template._v_template
+        template_compiled = template._v_program
+        macro_template_compiled = macro_template._v_program
 
         # but they should not be recompiled afterwards
         template()
         macro_template.macros
-        self.assertTrue(template_compiled is template._v_template)
-        self.assertTrue(macro_template_compiled is macro_template._v_template)
+        self.assertTrue(template_compiled is template._v_program)
+        self.assertTrue(macro_template_compiled is macro_template._v_program)
 
     def test_repeat_object_security(self):
         template = self._makeOne('foo', repeat_object)

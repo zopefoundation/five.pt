@@ -1,28 +1,26 @@
 Overview
 ========
 
-The five.pt package brings the Chameleon template engine to the Zope 2
-platform. It's a drop-in replacement, providing bridges to the most
-common API.
+This package brings the Chameleon template engine to the Zope 2
+platform. Five is supported.
 
-Support for browser pages, viewlets and viewlet managers is included.
+It works using monkey-patching onto the existing API (specifically,
+the ``TALInterpreter`` and ``PageTemplate`` classes). In simple terms,
+what the patching does is to replace the TAL interpreter class and
+make sure that the so-called "cooking" routine uses the Chameleon
+parser and compiler instead of the ``zope.*`` reference
+implementation.
+
 
 Usage
 ~~~~~
 
-To enable Chameleon, simply include the ZCML configuration::
+To enable Chameleon, configure the package using ZCML::
 
   <include package="five.pt" />
 
-Tempates may be instantiated directly. Here's an example of a browser view
-which uses a view page template::
+Alternatively, import the ``patches`` module at any time::
 
-  from Products.Five import BrowserView
-  from five.pt.pagetemplate import ViewPageTemplateFile
+  import five.pt.patches
 
-  class SimpleView(BrowserView):
-      index = ViewPageTemplateFile('simple.pt')
-
-Other template classes are available, see the ``pagetemplate`` module.
-
-For general information about Chameleon, see http://chameleon.repoze.org/.
+For more information on Chameleon, see http://www.pagetemplates.org/.
