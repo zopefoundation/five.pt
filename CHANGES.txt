@@ -1,7 +1,10 @@
 Changelog
 =========
 
-In next release ...
+2.1 (2011-07-14)
+~~~~~~~~~~~~~~~~
+
+- Point release.
 
 - Use trusted path expression for trusted expression engine.
   [malthe]
