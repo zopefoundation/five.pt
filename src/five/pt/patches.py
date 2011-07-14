@@ -22,10 +22,11 @@ from chameleon.tales import PythonExpr
 from chameleon.tal import RepeatDict
 
 from .expressions import PathExpr
+from .expressions import TrustedPathExpr
 from .expressions import ProviderExpr
 from .expressions import NocallExpr
 from .expressions import ExistsExpr
-from .expressions import SecurePythonExpr
+from .expressions import UntrustedPythonExpr
 
 
 # Declare Chameleon's repeat dictionary public
@@ -37,7 +38,7 @@ InitializeClass(RepeatDict)
 
 # Zope 2 Page Template expressions
 _secure_expression_types = {
-    'python': SecurePythonExpr,
+    'python': UntrustedPythonExpr,
     'string': StringExpr,
     'not': NotExpr,
     'exists': ExistsExpr,
@@ -53,7 +54,7 @@ _expression_types = {
     'string': StringExpr,
     'not': NotExpr,
     'exists': ExistsExpr,
-    'path': PathExpr,
+    'path': TrustedPathExpr,
     'provider': ProviderExpr,
     'nocall': NocallExpr,
     }
@@ -110,7 +111,7 @@ def create_interpreter(cls, *args, **kwargs):
 class ChameleonTALInterpreter(object):
     def __init__(self, template, macros, context, stream, tal=True, **kwargs):
         self.template = template
-        self.econtext = context.vars
+        self.context = context.vars
         self.repeat = context.repeat_vars
         self.stream = stream
         self.tal = tal
@@ -119,21 +120,21 @@ class ChameleonTALInterpreter(object):
         if self.tal is False:
             result = self.template.body
         else:
-            econtext = self.econtext
+            context = self.context
 
             # Swap out repeat dictionary for Chameleon implementation
             # and store wrapped dictionary in new variable -- this is
             # in turn used by the secure Python expression
             # implementation whenever a 'repeat' symbol is found
-            econtext['wrapped_repeat'] = econtext['repeat']
-            econtext['repeat'] = RepeatDict(self.repeat)
+            context['wrapped_repeat'] = context['repeat']
+            context['repeat'] = RepeatDict(self.repeat)
 
-            result = self.template.render(
-                path=self.template.evaluate_path,
-                exists=self.template.evaluate_exists,
-                test=test,
-                **econtext
-                )
+            # XXX: This could be implemented as a transform which uses
+            # the turnary operator in place of calls to the test
+            # function.
+            context.setdefault('test', test)
+
+            result = self.template.render(**context)
 
         self.stream.write(result)
 

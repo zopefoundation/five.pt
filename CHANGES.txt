@@ -1,6 +1,16 @@
 Changelog
 =========
 
+In next release ...
+
+- Use trusted path expression for trusted expression engine.
+  [malthe]
+
+- Fixed template context issues where a ``request`` would be required
+  by the path expression compiler but not provided (typically when in
+  a situation where the user is unauthorized to view content).
+  [malthe]
+
 2.1-rc1 (2011-07-14)
 ~~~~~~~~~~~~~~~~~~~~
 

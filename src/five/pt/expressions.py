@@ -79,13 +79,16 @@ def render(ob, request):
     return ob
 
 
-class FiveTraverser(object):
+class BoboAwareZopeTraverse(object):
+    traverse_method = 'restrictedTraverse'
+
     def __call__(self, base, request, call, *path_items):
         """See ``zope.app.pagetemplate.engine``."""
 
         length = len(path_items)
         if length:
             i = 0
+            method = self.traverse_method
             while i < length:
                 name = path_items[i]
                 i += 1
@@ -98,7 +101,8 @@ class FiveTraverser(object):
                     if isinstance(base, dict):
                         base = base[name]
                     elif ITraversable.providedBy(base):
-                        base = base.restrictedTraverse(name)
+                        traverser = getattr(base, method)
+                        base = traverser(name)
                     else:
                         base = traversePathElement(
                             base, name, path_items[i:], request=request)
@@ -114,12 +118,22 @@ class FiveTraverser(object):
         return base
 
 
+class TrustedBoboAwareZopeTraverse(BoboAwareZopeTraverse):
+    traverse_method = 'unrestrictedTraverse'
+
+
 class PathExpr(expressions.PathExpr):
     exceptions = zope2_exceptions
 
-    traverser = Static(
-        template("cls()", cls=Symbol(FiveTraverser), mode="eval")
-        )
+    traverser = Static(template(
+        "cls()", cls=Symbol(BoboAwareZopeTraverse), mode="eval"
+        ))
+
+
+class TrustedPathExpr(PathExpr):
+    traverser = Static(template(
+        "cls()", cls=Symbol(TrustedBoboAwareZopeTraverse), mode="eval"
+        ))
 
 
 class NocallExpr(expressions.NocallExpr, PathExpr):
@@ -169,7 +183,7 @@ class RestrictionTransform(NodeTransformer):
         return node
 
 
-class SecurePythonExpr(expressions.PythonExpr):
+class UntrustedPythonExpr(expressions.PythonExpr):
     rm = RestrictionMutator()
     rt = RestrictionTransform()
 
@@ -186,7 +200,7 @@ class SecurePythonExpr(expressions.PythonExpr):
         node = ast24_parse(decoded, 'eval').node
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
-        value = super(SecurePythonExpr, self).parse(string)
+        value = super(UntrustedPythonExpr, self).parse(string)
         self.rt.visit(value)
         self.nt.visit(value)
         return value
