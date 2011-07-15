@@ -1,6 +1,11 @@
 Changelog
 =========
 
+In next release ...
+
+- Added the ``same_type`` function to the provided context.
+  [malthe]
+
 2.1 (2011-07-14)
 ~~~~~~~~~~~~~~~~
 

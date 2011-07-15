@@ -97,6 +97,17 @@ def cook(self):
         self._v_errors = ()
 
 
+def same_type(arg1, *args):
+    """Compares the class or type of two or more objects. Copied from
+    RestrictedPython.
+    """
+    t = getattr(arg1, '__class__', type(arg1))
+    for arg in args:
+        if getattr(arg, '__class__', type(arg)) is not t:
+            return False
+    return True
+
+
 def test(condition, a, b):
     if condition:
         return a
@@ -133,6 +144,7 @@ class ChameleonTALInterpreter(object):
             # the turnary operator in place of calls to the test
             # function.
             context.setdefault('test', test)
+            context.setdefault('same_type', same_type)
 
             result = self.template.render(**context)
 
