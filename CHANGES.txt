@@ -3,7 +3,12 @@ Changelog
 
 In next release ...
 
-- Added the ``same_type`` function to the provided context.
+- Added builtins from ``RestrictedPython`` to context for Zope 2
+  templates.
+
+  This fixes name error issues on templates that use one or more
+  utility function builtins normally available to Python expressions
+  in restricted mode.
   [malthe]
 
 2.1 (2011-07-14)

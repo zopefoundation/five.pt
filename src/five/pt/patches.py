@@ -15,6 +15,7 @@ from z3c.pt.pagetemplate import PageTemplateFile as ChameleonPageTemplateFile
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from Products.PageTemplates.Expressions import getEngine
+from RestrictedPython.Utilities import utility_builtins
 
 from chameleon.tales import StringExpr
 from chameleon.tales import NotExpr
@@ -67,8 +68,10 @@ def cook(self):
 
     if engine is getEngine():
         expression_types = _secure_expression_types
+        builtins = utility_builtins
     else:
         expression_types = _expression_types
+        builtins = {}
 
     if filename is None:
         program = ChameleonPageTemplate(
@@ -80,6 +83,8 @@ def cook(self):
             filename, keep_body=True,
             expression_types=expression_types,
             encoding='utf-8')
+
+    program._v_builtins = builtins
 
     self._v_program = program
     self._v_macros = program.macros
@@ -95,23 +100,6 @@ def cook(self):
             ]
     else:
         self._v_errors = ()
-
-
-def same_type(arg1, *args):
-    """Compares the class or type of two or more objects. Copied from
-    RestrictedPython.
-    """
-    t = getattr(arg1, '__class__', type(arg1))
-    for arg in args:
-        if getattr(arg, '__class__', type(arg)) is not t:
-            return False
-    return True
-
-
-def test(condition, a, b):
-    if condition:
-        return a
-    return b
 
 
 @staticmethod
@@ -140,11 +128,8 @@ class ChameleonTALInterpreter(object):
             context['wrapped_repeat'] = context['repeat']
             context['repeat'] = RepeatDict(self.repeat)
 
-            # XXX: This could be implemented as a transform which uses
-            # the turnary operator in place of calls to the test
-            # function.
-            context.setdefault('test', test)
-            context.setdefault('same_type', same_type)
+            # Update context with applicable builtins
+            context.update(self.template._v_builtins)
 
             result = self.template.render(**context)
 
