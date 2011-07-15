@@ -1,10 +1,12 @@
 <div xmlns="http://www.w3.org/1999/xhtml"
      xmlns:tal="http://xml.zope.org/namespaces/tal">
-    <div tal:replace="string:view:${view/available}" />
+    <div tal:replace="string:view:${view/available|nothing}" />
     <div tal:replace="python:'here==context:'+str(here==context)" />
     <div tal:replace="python:'here==container:'+str(here==container)" />
     <div tal:replace="string:root:${root/getPhysicalPath}" />
     <div tal:replace="string:nothing:${nothing}" />
     <div tal:define="cgi python:modules['cgi']"
          tal:replace="python: dir(cgi)" />
+    <div tal:define="test nocall: test|nothing" tal:replace="python: test" />
+    <div tal:define="same nocall: same_type|nothing" tal:replace="python: same" />
 </div>

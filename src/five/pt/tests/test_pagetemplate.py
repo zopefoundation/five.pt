@@ -20,6 +20,12 @@ class TestPageTemplateFile(ZopeTestCase):
         return PageTemplateFile(os.path.join(path, name)).\
                __of__(self.app)
 
+    def test_locals(self):
+        template = self._makeOne('locals.pt')
+        result = template()
+        self.failUnless('function test' in result)
+        self.failUnless('function same_type' in result)
+
     def test_locals_base(self):
         template = self._makeOne('locals_base.pt')
         result = template()
