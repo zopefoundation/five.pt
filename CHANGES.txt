@@ -1,6 +1,16 @@
 Changelog
 =========
 
+In next release ...
+
+- Use the Python expression from the ``z3c.pt`` package for the
+  trusted page template engine. This difference between this and the
+  standard Python expression from Chameleon is that the pipe character
+  (``"|"``) has the meaning of fallback in Chameleon, but not in the
+  reference ZPT implementation (where it's only available for path
+  expressions).
+  [malthe]
+
 2.1.1 (2011-07-15)
 ~~~~~~~~~~~~~~~~~~
 

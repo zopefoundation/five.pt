@@ -19,8 +19,9 @@ from RestrictedPython.Utilities import utility_builtins
 
 from chameleon.tales import StringExpr
 from chameleon.tales import NotExpr
-from chameleon.tales import PythonExpr
 from chameleon.tal import RepeatDict
+
+from z3c.pt.expressions import PythonExpr
 
 from .expressions import PathExpr
 from .expressions import TrustedPathExpr
@@ -28,6 +29,7 @@ from .expressions import ProviderExpr
 from .expressions import NocallExpr
 from .expressions import ExistsExpr
 from .expressions import UntrustedPythonExpr
+
 
 
 # Declare Chameleon's repeat dictionary public
