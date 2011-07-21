@@ -14,6 +14,7 @@ from zope.contentprovider.interfaces import IContentProvider
 from zope.contentprovider.interfaces import ContentProviderLookupError
 
 from RestrictedPython.RestrictionMutator import RestrictionMutator
+from RestrictedPython.Utilities import utility_builtins
 from RestrictedPython import MutatingWalker
 
 from AccessControl.ZopeGuards import guarded_getattr
@@ -48,6 +49,10 @@ zope2_exceptions = NameError, \
                    NotFound, \
                    Unauthorized, \
                    TraversalError
+
+
+def static(obj):
+    return Static(template("obj", obj=Symbol(obj), mode="eval"))
 
 
 def render(ob, request):
@@ -187,13 +192,17 @@ class UntrustedPythonExpr(expressions.PythonExpr):
     rm = RestrictionMutator()
     rt = RestrictionTransform()
 
-    def _dynamic_transform(node):
+    builtins = dict(
+        (name, static(builtin)) for (name, builtin) in utility_builtins.items()
+        )
+
+    def nt(self, node):
         if node.id == 'repeat':
             node.id = 'wrapped_repeat'
+        else:
+            node = self.builtins.get(node.id, node)
 
         return node
-
-    nt = NameLookupRewriteVisitor(_dynamic_transform)
 
     def parse(self, string):
         decoded = decode_htmlentities(string)
@@ -201,6 +210,12 @@ class UntrustedPythonExpr(expressions.PythonExpr):
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
         value = super(UntrustedPythonExpr, self).parse(string)
+
+        # Run restricted python transform
         self.rt.visit(value)
-        self.nt.visit(value)
+
+        # Rewrite builtins
+        transform = NameLookupRewriteVisitor(self.nt)
+        transform.visit(value)
+
         return value

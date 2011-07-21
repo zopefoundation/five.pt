@@ -3,6 +3,10 @@ Changelog
 
 In next release ...
 
+- Wire in restricted python builtins as imports. Previously these were
+  added to the dynamic context.
+  [malthe]
+
 - Use the Python expression from the ``z3c.pt`` package for the
   trusted page template engine. This difference between this and the
   standard Python expression from Chameleon is that the pipe character

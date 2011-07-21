@@ -15,7 +15,6 @@ from z3c.pt.pagetemplate import PageTemplateFile as ChameleonPageTemplateFile
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from Products.PageTemplates.Expressions import getEngine
-from RestrictedPython.Utilities import utility_builtins
 
 from chameleon.tales import StringExpr
 from chameleon.tales import NotExpr
@@ -29,7 +28,6 @@ from .expressions import ProviderExpr
 from .expressions import NocallExpr
 from .expressions import ExistsExpr
 from .expressions import UntrustedPythonExpr
-
 
 
 # Declare Chameleon's repeat dictionary public
@@ -70,10 +68,8 @@ def cook(self):
 
     if engine is getEngine():
         expression_types = _secure_expression_types
-        builtins = utility_builtins
     else:
         expression_types = _expression_types
-        builtins = {}
 
     if filename is None:
         program = ChameleonPageTemplate(
@@ -85,8 +81,6 @@ def cook(self):
             filename, keep_body=True,
             expression_types=expression_types,
             encoding='utf-8')
-
-    program._v_builtins = builtins
 
     self._v_program = program
     self._v_macros = program.macros
@@ -129,9 +123,6 @@ class ChameleonTALInterpreter(object):
             # implementation whenever a 'repeat' symbol is found
             context['wrapped_repeat'] = context['repeat']
             context['repeat'] = RepeatDict(self.repeat)
-
-            # Update context with applicable builtins
-            context.update(self.template._v_builtins)
 
             result = self.template.render(**context)
 
