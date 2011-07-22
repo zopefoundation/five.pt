@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release ...
+2.1.3 (2011-07-23)
+~~~~~~~~~~~~~~~~~~
 
 - Fixed issue with traversal and dictionary optimization (the
   optimization has been removed).
