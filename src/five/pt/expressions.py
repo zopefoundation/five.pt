@@ -102,10 +102,7 @@ class BoboAwareZopeTraverse(object):
                 name = path_items[i]
                 i += 1
 
-                # special-case dicts for performance reasons
-                if isinstance(base, dict):
-                    base = base[name]
-                elif ITraversable.providedBy(base):
+                if ITraversable.providedBy(base):
                     traverser = getattr(base, method)
                     base = traverser(name)
                 else:

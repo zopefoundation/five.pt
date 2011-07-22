@@ -3,6 +3,10 @@ Changelog
 
 In next release ...
 
+- Fixed issue with traversal and dictionary optimization (the
+  optimization has been removed).
+  [malthe]
+
 - Fixed compatibility issue with the ``UnauthorizedBinding`` class and
   traversal.
   [malthe]
