@@ -97,20 +97,16 @@ class BoboAwareZopeTraverse(object):
             while i < length:
                 name = path_items[i]
                 i += 1
-                next = getattr(base, name, _marker)
-                if next is not _marker:
-                    base = next
-                    continue
+
+                # special-case dicts for performance reasons
+                if isinstance(base, dict):
+                    base = base[name]
+                elif ITraversable.providedBy(base):
+                    traverser = getattr(base, method)
+                    base = traverser(name)
                 else:
-                    # special-case dicts for performance reasons
-                    if isinstance(base, dict):
-                        base = base[name]
-                    elif ITraversable.providedBy(base):
-                        traverser = getattr(base, method)
-                        base = traverser(name)
-                    else:
-                        base = traversePathElement(
-                            base, name, path_items[i:], request=request)
+                    base = traversePathElement(
+                        base, name, path_items[i:], request=request)
 
         if call is False:
             return base

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next release ...
+
+- Fixed compatibility issue with the ``UnauthorizedBinding`` class and
+  traversal.
+  [malthe]
+
 2.1.2 (2011-07-21)
 ~~~~~~~~~~~~~~~~~~
 
