@@ -1,4 +1,5 @@
 from ast import NodeTransformer
+from types import ClassType
 from compiler import parse as ast24_parse
 
 from Acquisition import aq_base
@@ -87,13 +88,16 @@ def render(ob, request):
 class BoboAwareZopeTraverse(object):
     traverse_method = 'restrictedTraverse'
 
-    def __call__(self, base, request, call, *path_items):
+    __slots__ = ()
+
+    @classmethod
+    def traverse(cls, base, request, path_items):
         """See ``zope.app.pagetemplate.engine``."""
 
         length = len(path_items)
         if length:
             i = 0
-            method = self.traverse_method
+            method = cls.traverse_method
             while i < length:
                 name = path_items[i]
                 i += 1
@@ -106,14 +110,18 @@ class BoboAwareZopeTraverse(object):
                     base = traverser(name)
                 else:
                     base = traversePathElement(
-                        base, name, path_items[i:], request=request)
+                        base, name, path_items[i:], request=request
+                        )
+
+        return base
+
+    def __call__(self, base, request, call, *path_items):
+        base = self.traverse(base, request, path_items)
 
         if call is False:
             return base
 
         if getattr(base, '__call__', _marker) is not _marker or callable(base):
-            # here's where we're different from the standard path
-            # traverser
             base = render(base, request)
 
         return base
@@ -121,6 +129,20 @@ class BoboAwareZopeTraverse(object):
 
 class TrustedBoboAwareZopeTraverse(BoboAwareZopeTraverse):
     traverse_method = 'unrestrictedTraverse'
+
+    __slots__ = ()
+
+    def __call__(self, base, request, call, *path_items):
+        base = self.traverse(base, request, path_items)
+
+        if call is False:
+            return base
+
+        if (getattr(base, '__call__', _marker) is not _marker \
+            or isinstance(base, ClassType)):
+            return base()
+
+        return base
 
 
 class PathExpr(expressions.PathExpr):
