@@ -20,6 +20,21 @@ class TestPageTemplateFile(ZopeTestCase):
         return PageTemplateFile(os.path.join(path, name)).\
                __of__(self.app)
 
+    def test_rr(self):
+        class Prioritzed(object):
+            __allow_access_to_unprotected_subobjects__ = 1
+
+            def __init__(self, order):
+                self.order = order
+
+            def __str__(self):
+                return 'P%d' % self.order
+
+        template = self._makeOne('rr.pt')
+        result = template(refs=[Prioritzed(1), Prioritzed(2)])
+        self.assertTrue('P1' in result)
+        self.assertTrue(result.index('P1') < result.index('P2'))
+
     def test_locals(self):
         template = self._makeOne('locals.pt')
         result = template()
