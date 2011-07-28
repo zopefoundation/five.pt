@@ -214,6 +214,9 @@ class UntrustedPythonExpr(expressions.PythonExpr):
         (name, static(builtin)) for (name, builtin) in utility_builtins.items()
         ))
 
+    builtins['modules'] = template("cls()", cls=Symbol(
+        ZRPythonExpr._SecureModuleImporter), mode="eval")
+
     def rewrite(self, node):
         if node.id == 'repeat':
             node.id = 'wrapped_repeat'
