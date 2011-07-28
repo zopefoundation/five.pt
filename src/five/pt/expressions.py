@@ -26,7 +26,6 @@ from AccessControl.ZopeGuards import protected_inplacevar
 
 from chameleon.astutil import Symbol
 from chameleon.astutil import Static
-from chameleon.astutil import NameLookupRewriteVisitor
 from chameleon.codegen import template
 from chameleon.utils import decode_htmlentities
 from sourcecodegen import generate_code
@@ -207,15 +206,19 @@ class UntrustedPythonExpr(expressions.PythonExpr):
     rm = RestrictionMutator()
     rt = RestrictionTransform()
 
-    builtins = dict(
-        (name, static(builtin)) for (name, builtin) in utility_builtins.items()
-        )
+    # Make copy of parent expression builtins
+    builtins = expressions.PythonExpr.builtins.copy()
 
-    def nt(self, node):
+    # Update builtins with Restricted Python utility builtins
+    builtins.update(dict(
+        (name, static(builtin)) for (name, builtin) in utility_builtins.items()
+        ))
+
+    def rewrite(self, node):
         if node.id == 'repeat':
             node.id = 'wrapped_repeat'
         else:
-            node = self.builtins.get(node.id, node)
+            node = super(UntrustedPythonExpr, self).rewrite(node)
 
         return node
 
@@ -228,9 +231,5 @@ class UntrustedPythonExpr(expressions.PythonExpr):
 
         # Run restricted python transform
         self.rt.visit(value)
-
-        # Rewrite builtins
-        transform = NameLookupRewriteVisitor(self.nt)
-        transform.visit(value)
 
         return value
