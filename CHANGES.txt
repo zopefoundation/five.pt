@@ -1,6 +1,11 @@
 Changelog
 =========
 
+In next release ...
+
+- Use secure moduler importer for both Zope 2 and 3 templates. This
+  fixes issue #34.
+
 2.1.4 (2011-07-28)
 ~~~~~~~~~~~~~~~~~~
 

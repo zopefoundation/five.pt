@@ -15,6 +15,7 @@ from z3c.pt.pagetemplate import PageTemplateFile as ChameleonPageTemplateFile
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from Products.PageTemplates.Expressions import getEngine
+from Products.PageTemplates import ZRPythonExpr
 
 from chameleon.tales import StringExpr
 from chameleon.tales import NotExpr
@@ -64,23 +65,28 @@ _expression_types = {
 def cook(self):
     engine = self.pt_getEngine()
 
-    filename = getattr(self, 'filename', None)
+    filename = getattr(self, 'filename', None) or \
+               getattr(self, '_filename', None)
 
     if engine is getEngine():
         expression_types = _secure_expression_types
     else:
         expression_types = _expression_types
 
+    extra_builtins = {
+        'modules': ZRPythonExpr._SecureModuleImporter()
+        }
+
     if filename is None:
         program = ChameleonPageTemplate(
             self._text, keep_body=True,
             expression_types=expression_types,
-            encoding='utf-8')
+            encoding='utf-8', extra_builtins=extra_builtins)
     else:
         program = ChameleonPageTemplateFile(
             filename, keep_body=True,
             expression_types=expression_types,
-            encoding='utf-8')
+            encoding='utf-8', extra_builtins=extra_builtins)
 
     self._v_program = program
     self._v_macros = program.macros
