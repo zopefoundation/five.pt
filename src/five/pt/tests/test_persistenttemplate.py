@@ -1,3 +1,6 @@
+import re
+import cgi
+
 from Testing.ZopeTestCase import ZopeTestCase
 from Products.PageTemplates.ZopePageTemplate import manage_addPageTemplate
 
@@ -59,6 +62,18 @@ def generate_capture_source(names):
                        for name in names)
     return options_capture_update_base % (params,)
 
+textarea_content_search = re.compile(
+    r'<textarea[^>]*>([^<]+)</textarea>',
+    re.IGNORECASE | re.MULTILINE
+).search
+
+def get_editable_content(template):
+    # Note that pt_editForm is also a patched PageTemplateFile class,
+    # so this is actually a test of five.pt as well.
+    edit_form = template.pt_editForm()
+    editable_text = textarea_content_search(edit_form).group(1)
+    return editable_text
+
 _marker = object()
 
 class TestPersistent(ZopeTestCase):
@@ -79,8 +94,16 @@ class TestPersistent(ZopeTestCase):
         template = self._makeOne('foo', simple_i18n)
         result = template().strip()
         self.assertEqual(result, u'Hello, World')
-        # check that it's editable
-        template.pt_editForm()
+        editable_text = get_editable_content(template)
+        self.assertEqual(editable_text, cgi.escape(simple_i18n))
+
+    def test_escape_on_edit(self):
+        # check that escapable chars can round-trip intact.
+        source = u"&gt; &amp; &lt;"
+        template = self._makeOne('foo', source)
+        self.assertEqual(template(), source) # nothing to render
+        editable_text = get_editable_content(template)
+        self.assertEqual(editable_text, cgi.escape(source))
 
     def test_macro_with_i18n(self):
         self._makeOne('macro_outer', macro_outer)
@@ -139,3 +162,12 @@ class TestPersistent(ZopeTestCase):
         self.folder.method = 'post'
         template = self._makeOne('foo', python_path_source)
         self.assertEquals(template(), u'<form method="post" />')
+
+    def test_filename_attribute(self):
+        # check that a persistent page template that happens to have
+        # a filename attribute doesn't break
+        template = self._makeOne('foo', repeat_object)
+        template.filename = 'some/random/path'
+        # this should still work, without trying to open some random
+        # file on the filesystem
+        self.assertEqual(template().strip().split(), u'0 1 2'.split())
