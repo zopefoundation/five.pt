@@ -40,6 +40,12 @@ simple_i18n = """
 </tal:block>
 """.strip()
 
+simple_error = """
+<tal:block define="foo python: 0 < 1">
+  putting a "less-than" inside an attribute value is not valid
+</tal:block>
+""".strip()
+
 repeat_object = """
 <tal:loop repeat="counter python: range(3)" 
           content="python: repeat['counter'].index" />
@@ -171,3 +177,15 @@ class TestPersistent(ZopeTestCase):
         # this should still work, without trying to open some random
         # file on the filesystem
         self.assertEqual(template().strip().split(), u'0 1 2'.split())
+
+    def test_edit_with_errors(self):
+        from zope.pagetemplate.pagetemplate import _error_start
+        template = self._makeOne('foo', simple_error)
+        # this should not raise:
+        editable_text = get_editable_content(template)
+        # and the errors should be in an xml comment at the start of
+        # the editable text
+        error_prefix = cgi.escape(
+            '%s\n %s\n-->\n' % (_error_start, '\n '.join(template._v_errors))
+        )
+        self.assertTrue(editable_text.startswith(error_prefix))
