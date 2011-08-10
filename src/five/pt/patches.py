@@ -63,37 +63,31 @@ _expression_types = {
 
 
 def cook(self):
-    engine = self.pt_getEngine()
+    program = self._v_program
+    if program is None:
+        engine = self.pt_getEngine()
+        source_file = self.pt_source_file()
 
-    filename = getattr(self, 'filename', None) or \
-               getattr(self, '_filename', None)
+        if engine is getEngine():
+            expression_types = _secure_expression_types
+        else:
+            expression_types = _expression_types
 
-    if engine is getEngine():
-        expression_types = _secure_expression_types
-    else:
-        expression_types = _expression_types
+        extra_builtins = {
+            'modules': ZRPythonExpr._SecureModuleImporter()
+            }
 
-    extra_builtins = {
-        'modules': ZRPythonExpr._SecureModuleImporter()
-        }
-
-    if filename is None:
         program = ChameleonPageTemplate(
-            self._text, keep_body=True,
+            "", filename=source_file, keep_body=True,
             expression_types=expression_types,
-            encoding='utf-8', extra_builtins=extra_builtins)
-    else:
-        program = ChameleonPageTemplateFile(
-            filename, keep_body=True,
-            expression_types=expression_types,
-            encoding='utf-8', extra_builtins=extra_builtins)
+            encoding='utf-8', extra_builtins=extra_builtins,
+            )
 
-    self._v_program = program
-    self._v_macros = program.macros
-    self._v_cooked = 1
+        self._v_program = program
+        self._v_macros = program.macros
 
     try:
-        program.cook_check()
+        program.cook(self._text)
     except:
         etype, e = sys.exc_info()[:2]
         self._v_errors = [
@@ -102,6 +96,8 @@ def cook(self):
             ]
     else:
         self._v_errors = ()
+
+    self._v_cooked = 1
 
 
 @staticmethod

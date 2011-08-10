@@ -41,8 +41,8 @@ simple_i18n = """
 """.strip()
 
 simple_error = """
-<tal:block define="foo python: 0 < 1">
-  putting a "less-than" inside an attribute value is not valid
+<tal:block content__typo="nothing">
+  it's an error to use an unknown attribute in the tal namespace
 </tal:block>
 """.strip()
 

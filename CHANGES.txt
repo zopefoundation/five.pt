@@ -3,8 +3,16 @@ Changelog
 
 In next release ...
 
+- Reuse template instance on cook.
+  [malthe]
+
+- Use the template source string available in the ``_text`` attribute
+  instead of reading the file (again).
+  [leorochael, malthe]
+
 - Use secure moduler importer for both Zope 2 and 3 templates. This
   fixes issue #34.
+  [malthe]
 
 2.1.4 (2011-07-28)
 ~~~~~~~~~~~~~~~~~~
