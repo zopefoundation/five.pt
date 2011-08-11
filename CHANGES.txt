@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release ...
+2.1.5 (2011-08-11)
+~~~~~~~~~~~~~~~~~~
 
 - Reuse template instance on cook.
   [malthe]

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.1.5dev'
+version = '2.1.5'
 
 setup(name='five.pt',
       version=version,
@@ -25,9 +25,8 @@ setup(name='five.pt',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'z3c.pt>=2.1',
+          'z3c.pt>=2.1.1',
           'sourcecodegen',
-          'Chameleon>2.2',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
