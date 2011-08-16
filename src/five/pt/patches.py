@@ -10,7 +10,6 @@ import sys
 from zope.tal.talinterpreter import TALInterpreter
 from zope.pagetemplate.pagetemplate import PageTemplate
 from z3c.pt.pagetemplate import PageTemplate as ChameleonPageTemplate
-from z3c.pt.pagetemplate import PageTemplateFile as ChameleonPageTemplateFile
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
