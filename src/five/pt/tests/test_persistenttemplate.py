@@ -59,6 +59,15 @@ options_capture_update_base = """
 </metal:use>
 """.strip()
 
+lp_848200_source = """
+<tal:block>
+  <tag tal:condition="False"
+       tal:attributes="attrib string:false" />
+  <tag tal:condition="True"
+       tal:attributes="attrib string:true" />
+</tal:block>
+""".strip()
+
 python_path_source = """
 <form tal:attributes="method python:path('context/method')" />
 """.strip()
@@ -195,3 +204,8 @@ class TestPersistent(ZopeTestCase):
         error_log = SiteErrorLog().__of__(self.folder)
         # this should render without errors
         error_log.manage_main()
+
+    def test_lp_848200(self):
+        # https://bugs.launchpad.net/chameleon.zpt/+bug/848200
+        template = self._makeOne('foo', lp_848200_source)
+        self.assertEqual(template().strip(), u'<tag attrib="true" />')
