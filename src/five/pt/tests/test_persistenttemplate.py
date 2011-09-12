@@ -189,3 +189,9 @@ class TestPersistent(ZopeTestCase):
             '%s\n %s\n-->\n' % (_error_start, '\n '.join(template._v_errors))
         )
         self.assertTrue(editable_text.startswith(error_prefix))
+
+    def test_error_log_object(self):
+        from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
+        error_log = SiteErrorLog().__of__(self.folder)
+        # this should render without errors
+        error_log.manage_main()
