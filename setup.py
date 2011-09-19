@@ -26,7 +26,7 @@ setup(name='five.pt',
       install_requires=[
           'setuptools',
           'z3c.pt>=2.1.1',
-          'sourcecodegen',
+          'sourcecodegen>=0.6.14',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
