@@ -25,7 +25,7 @@ setup(name='five.pt',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'z3c.pt>=2.1.1',
+          'z3c.pt>=2.1.4',
           'sourcecodegen>=0.6.14',
       ],
       entry_points="""
