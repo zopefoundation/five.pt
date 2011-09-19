@@ -68,6 +68,12 @@ lp_848200_source = """
 </tal:block>
 """.strip()
 
+tal_onerror_structure_source = """
+<tal:block tal:on-error="structure python: '&lt;i&gt;error!&lt;/i&gt;'">
+  <i tal:content="python: 1/0">
+</tal:block>
+"""
+
 python_path_source = """
 <form tal:attributes="method python:path('context/method')" />
 """.strip()
@@ -209,3 +215,7 @@ class TestPersistent(ZopeTestCase):
         # https://bugs.launchpad.net/chameleon.zpt/+bug/848200
         template = self._makeOne('foo', lp_848200_source)
         self.assertEqual(template().strip(), u'<tag attrib="true" />')
+
+    def test_onerror_structure(self):
+        template = self._makeOne('foo', tal_onerror_structure_source)
+        self.assertEqual(template().strip(), u'<i>error!</i>')
