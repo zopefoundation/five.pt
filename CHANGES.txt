@@ -1,11 +1,20 @@
 Changelog
 =========
 
-In next release ...
+2.1.6 (unreleased)
+~~~~~~~~~~~~~~~~~~
+
+- Declare RepeatItem as public object with allowed subobjects
+  [leorochael]
+
+- Bump minimum versions of dependencies z3c.pt and sourcecodegen to fix
+  lp#853731 and lp#848200.
+  [leorochael]
 
 - Fixed encoding issue with restricted Python expression. The Python
   2.4 AST parser does not accept unicode input and the expression
   string must be explicitly encoded to a byte string.
+  [malthe]
 
 2.1.5 (2011-08-11)
 ~~~~~~~~~~~~~~~~~~
