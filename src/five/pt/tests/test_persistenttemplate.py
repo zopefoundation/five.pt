@@ -70,7 +70,7 @@ lp_848200_source = """
 
 tal_onerror_structure_source = """
 <tal:block tal:on-error="structure python: '&lt;i&gt;error!&lt;/i&gt;'">
-  <i tal:content="python: 1/0">
+  <i tal:content="python: 1/0" />
 </tal:block>
 """.strip()
 
