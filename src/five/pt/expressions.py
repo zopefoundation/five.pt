@@ -224,10 +224,12 @@ class UntrustedPythonExpr(expressions.PythonExpr):
 
     def parse(self, string):
         decoded = decode_htmlentities(string)
-        node = ast24_parse(decoded, 'eval').node
+        encoded = decoded.encode('utf-8')
+        node = ast24_parse(encoded, 'eval').node
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
-        value = super(UntrustedPythonExpr, self).parse(string)
+        decoded = string.decode('utf-8')
+        value = super(UntrustedPythonExpr, self).parse(decoded)
 
         # Run restricted python transform
         self.rt.visit(value)

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next release ...
+
+- Fixed encoding issue with restricted Python expression. The Python
+  2.4 AST parser does not accept unicode input and the expression
+  string must be explicitly encoded to a byte string.
+
 2.1.5 (2011-08-11)
 ~~~~~~~~~~~~~~~~~~
 
