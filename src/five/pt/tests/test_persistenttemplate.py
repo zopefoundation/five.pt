@@ -181,6 +181,21 @@ class TestPersistent(ZopeTestCase):
         template = self._makeOne('foo', repeat_object)
         # this should not raise an Unauthorized error
         self.assertEquals(template().strip().split(), u'0 1 2'.split())
+        # XXX-leorochael: the rest of this test is not actually
+        # testing the security access, but I couldn't find a simpler
+        # way to test if the RepeatItem instance itself allows public
+        # access, and there are convoluted situations in production
+        # that need RepeatItem to be declared public.
+        src = """
+          <tal:b repeat="x python: range(1)"
+                 content="python: options['do'](repeat)" />
+        """.strip()
+        def do(repeat):
+            subobject_acces = '__allow_access_to_unprotected_subobjects__'
+            self.assertTrue(getattr(repeat['x'], subobject_acces, False))
+
+        template = self._makeOne('bar', src)
+        template(do=do)
 
     def test_path_function(self):
         # check that the "path" function inside a python expression works

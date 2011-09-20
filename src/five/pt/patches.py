@@ -19,6 +19,7 @@ from Products.PageTemplates import ZRPythonExpr
 from chameleon.tales import StringExpr
 from chameleon.tales import NotExpr
 from chameleon.tal import RepeatDict
+from chameleon.tal import RepeatItem
 
 from z3c.pt.expressions import PythonExpr
 
@@ -30,12 +31,16 @@ from .expressions import ExistsExpr
 from .expressions import UntrustedPythonExpr
 
 
-# Declare Chameleon's repeat dictionary public
-RepeatDict.security = ClassSecurityInfo()
-RepeatDict.security.declareObjectPublic()
-RepeatDict.__allow_access_to_unprotected_subobjects__ = True
-
-InitializeClass(RepeatDict)
+# Declare Chameleon's repeat objects public
+_public_classes = [
+    RepeatDict,
+    RepeatItem,
+]
+for cls in _public_classes:
+    cls.security = ClassSecurityInfo()
+    cls.security.declareObjectPublic()
+    cls.__allow_access_to_unprotected_subobjects__ = True
+    InitializeClass(cls)
 
 # Zope 2 Page Template expressions
 _secure_expression_types = {
