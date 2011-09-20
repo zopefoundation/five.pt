@@ -72,7 +72,11 @@ tal_onerror_structure_source = """
 <tal:block tal:on-error="structure python: '&lt;i&gt;error!&lt;/i&gt;'">
   <i tal:content="python: 1/0">
 </tal:block>
-"""
+""".strip()
+
+python_nbsp_source = """
+<p tal:content="structure python: '&amp;nbsp;'" />
+""".strip()
 
 python_path_source = """
 <form tal:attributes="method python:path('context/method')" />
@@ -219,3 +223,7 @@ class TestPersistent(ZopeTestCase):
     def test_onerror_structure(self):
         template = self._makeOne('foo', tal_onerror_structure_source)
         self.assertEqual(template().strip(), u'<i>error!</i>')
+
+    def test_python_nbsp(self):
+        template = self._makeOne('foo', python_nbsp_source)
+        self.assertEqual(template().strip(), u'<p>&nbsp;</p>')
