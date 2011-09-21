@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.1.5'
+version = '2.2-dev'
 
 setup(name='five.pt',
       version=version,
@@ -25,8 +25,9 @@ setup(name='five.pt',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'z3c.pt>=2.1.4',
           'sourcecodegen>=0.6.14',
+          'z3c.pt>=2.1.4',
+          'zope.pagetemplate>=3.6.2',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]

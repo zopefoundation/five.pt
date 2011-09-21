@@ -3,6 +3,8 @@
     xmlns:five="http://namespaces.zope.org/five">
 
   <include package="z3c.pt" />
-  <include package=".patches" />
+  <include package=".engine" />
+
+  <utility component=".engine.Program" />
 
 </configure>

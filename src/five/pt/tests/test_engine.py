@@ -26,8 +26,7 @@ class TestPatches(Sandboxed, ZopeTestCase):
 
         # test arguments
         template.write(open(os.path.join(path, "options.pt")).read())
-        self.assertTrue('Hello world' in template(
-            greeting='Hello world'))
+        self.assertTrue('Hello world' in template(greeting='Hello world'))
 
     def test_pagetemplatefile(self):
         from Products.PageTemplates.PageTemplateFile import PageTemplateFile

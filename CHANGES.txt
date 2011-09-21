@@ -1,8 +1,10 @@
 Changelog
 =========
 
-2.1.6 (unreleased)
-~~~~~~~~~~~~~~~~~~
+2.2 (unreleased)
+~~~~~~~~~~~~~~~~
+- Update implementation to use component-based template engine
+  configuration, plugging directly into the Zope Toolkit framework.
 
 - Declare RepeatItem as public object with allowed subobjects
   [leorochael]
