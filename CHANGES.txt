@@ -3,6 +3,7 @@ Changelog
 
 2.2 (unreleased)
 ~~~~~~~~~~~~~~~~
+
 - Update implementation to use component-based template engine
   configuration, plugging directly into the Zope Toolkit framework.
 

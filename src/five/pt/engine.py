@@ -99,6 +99,10 @@ class Program(object):
         else:
             expression_types = cls.expression_types
 
+        # BBB: Support CMFCore's FSPagetemplateFile formatting
+        if source_file.startswith('file:'):
+            source_file = source_file[5:]
+
         template = ChameleonPageTemplate(
             text, filename=source_file, keep_body=True,
             expression_types=expression_types,
