@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.2 (unreleased)
-~~~~~~~~~~~~~~~~
+2.2.0 (2011-10-10)
+~~~~~~~~~~~~~~~~~~
 
 - Update implementation to use component-based template engine
   configuration, plugging directly into the Zope Toolkit framework.
