@@ -19,8 +19,4 @@ To enable Chameleon, configure the package using ZCML::
 
   <include package="five.pt" />
 
-Alternatively, import the ``patches`` module at any time::
-
-  import five.pt.patches
-
 For more information on Chameleon, see http://www.pagetemplates.org/.
