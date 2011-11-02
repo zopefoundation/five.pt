@@ -104,12 +104,8 @@ _marker = object()
 class TestPersistent(ZopeTestCase):
     def afterSetUp(self):
         from Products.Five import zcml
-        import Products.Five
-        import z3c.pt
         import five.pt
-        zcml.load_config("configure.zcml", Products.Five)
         zcml.load_config("configure.zcml", five.pt)
-        zcml.load_config("configure.zcml", z3c.pt)
         self.setRoles(['Manager'])
 
     def _makeOne(self, template_id, source):

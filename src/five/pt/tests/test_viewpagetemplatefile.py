@@ -37,12 +37,8 @@ class MissingView(BrowserView):
 class TestPageTemplateFile(ZopeTestCase):
     def afterSetUp(self):
         from Products.Five import zcml
-        import Products.Five
-        import z3c.pt
         import five.pt
-        zcml.load_config("configure.zcml", Products.Five)
         zcml.load_config("configure.zcml", five.pt)
-        zcml.load_config("configure.zcml", z3c.pt)
 
     def test_simple(self):
         view = SimpleView(self.folder, self.folder.REQUEST)
