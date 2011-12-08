@@ -173,12 +173,13 @@ class TestPersistent(ZopeTestCase):
         # access, and there are convoluted situations in production
         # that need RepeatItem to be declared public.
         src = """
-          <tal:b repeat="x python: range(1)"
-                 content="python: options['do'](repeat)" />
+          <tal:b repeat="x python: range(1)">
+             <tal:b define="dummy python: options['do'](repeat)" />
+          </tal:b>
         """.strip()
         def do(repeat):
-            subobject_acces = '__allow_access_to_unprotected_subobjects__'
-            self.assertTrue(getattr(repeat['x'], subobject_acces, False))
+            subobject_access = '__allow_access_to_unprotected_subobjects__'
+            self.assertTrue(getattr(repeat['x'], subobject_access, False))
 
         template = self._makeOne('bar', src)
         template(do=do)
