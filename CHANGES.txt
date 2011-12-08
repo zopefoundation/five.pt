@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next release ...
+
+- Avoid duplicate HTML decoding. This fixes an issue which was
+  introduced because newer Chameleon releases decode all expression
+  inputs by default.
+
 2.2.0 (2011-10-10)
 ~~~~~~~~~~~~~~~~~~
 

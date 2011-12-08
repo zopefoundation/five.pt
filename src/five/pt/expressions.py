@@ -27,7 +27,6 @@ from AccessControl.ZopeGuards import protected_inplacevar
 from chameleon.astutil import Symbol
 from chameleon.astutil import Static
 from chameleon.codegen import template
-from chameleon.utils import decode_htmlentities
 from sourcecodegen import generate_code
 
 from z3c.pt import expressions
@@ -223,8 +222,7 @@ class UntrustedPythonExpr(expressions.PythonExpr):
         return node
 
     def parse(self, string):
-        decoded = decode_htmlentities(string)
-        encoded = decoded.encode('utf-8')
+        encoded = string.encode('utf-8')
         node = ast24_parse(encoded, 'eval').node
         MutatingWalker.walk(node, self.rm)
         string = generate_code(node)
