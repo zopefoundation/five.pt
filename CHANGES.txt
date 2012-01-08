@@ -3,6 +3,20 @@ Changelog
 
 In next release ...
 
+Features:
+
+- Whitespace between attributes is now reduced to a single whitespace
+  character.
+
+Bugfixes:
+
+- The path traverser now correctly renders callables, applying the
+  template namespace as keyword arguments. Previously, only the
+  ``request`` name would be passed.
+
+- The content provider expression now correctly applies TAL namespace
+  data.
+
 - Avoid duplicate HTML decoding. This fixes an issue which was
   introduced because newer Chameleon releases decode all expression
   inputs by default.

@@ -2,21 +2,29 @@ from ast import NodeTransformer
 from types import ClassType
 from compiler import parse as ast24_parse
 
-from Acquisition import aq_base
 from OFS.interfaces import ITraversable
-from Products.PageTemplates import ZRPythonExpr
 from zExceptions import NotFound, Unauthorized
 
-from zope import component
-from zope.proxy import removeAllProxies
-from zope.traversing.adapters import traversePathElement
-from zope.traversing.interfaces import TraversalError
+from zope.component import queryMultiAdapter
 from zope.contentprovider.interfaces import IContentProvider
 from zope.contentprovider.interfaces import ContentProviderLookupError
+from zope.contentprovider.tales import addTALNamespaceData
+
+try:
+    from zope.contentprovider.interfaces import BeforeUpdateEvent
+except ImportError:
+    BeforeUpdateEvent = None
+
+from zope.event import notify
+from zope.location.interfaces import ILocation
+from zope.traversing.adapters import traversePathElement
+from zope.traversing.interfaces import TraversalError
 
 from RestrictedPython.RestrictionMutator import RestrictionMutator
 from RestrictedPython.Utilities import utility_builtins
 from RestrictedPython import MutatingWalker
+
+from Products.PageTemplates.Expressions import render
 
 from AccessControl.ZopeGuards import guarded_getattr
 from AccessControl.ZopeGuards import guarded_getitem
@@ -34,10 +42,49 @@ from z3c.pt import expressions
 _marker = object()
 
 try:
-    import Products.Five.browser.providerexpression
-    AQ_WRAP_CP = True
+    # If this import succeeds, we need to use a content provider
+    # renderer which acquisition-wraps the provider component
+    from Products.Five.browser import providerexpression
+    providerexpression
+
 except ImportError:
-    AQ_WRAP_CP = False
+    ProviderExpr = expressions.ProviderExpr
+else:
+    def render_content_provider(econtext, name):
+        name = name.strip()
+
+        context = econtext.get('context')
+        request = econtext.get('request')
+        view = econtext.get('view')
+
+        cp = queryMultiAdapter(
+            (context, request, view), IContentProvider, name=name)
+
+        # provide a useful error message, if the provider was not found.
+        if cp is None:
+            raise ContentProviderLookupError(name)
+
+        # add the __name__ attribute if it implements ILocation
+        if ILocation.providedBy(cp):
+            cp.__name__ = name
+
+        # Insert the data gotten from the context
+        addTALNamespaceData(cp, econtext)
+
+        # BBB: This is where we're different:
+        if getattr(cp, '__of__', None) is not None:
+            cp = cp.__of__(context)
+
+        # Stage 1: Do the state update.
+        if BeforeUpdateEvent is not None:
+            notify(BeforeUpdateEvent(cp, request))
+        cp.update()
+
+        # Stage 2: Render the HTML content.
+        return cp.render()
+
+    class ProviderExpr(expressions.ProviderExpr):
+        transform = Symbol(render_content_provider)
 
 
 zope2_exceptions = NameError, \
@@ -52,35 +99,6 @@ zope2_exceptions = NameError, \
 
 def static(obj):
     return Static(template("obj", obj=Symbol(obj), mode="eval"))
-
-
-def render(ob, request):
-    """Calls the object, possibly a document template, or just returns
-    it if not callable.  (From Products.PageTemplates.Expressions.py)
-    """
-    # We are only different in the next line. The original function gets a
-    # dict-ish namespace passed in, we fake it.
-    # ZRPythonExpr.call_with_ns expects to get such a dict
-    ns = dict(context=ob, request=request)
-
-    if hasattr(ob, '__render_with_namespace__'):
-        ob = ZRPythonExpr.call_with_ns(ob.__render_with_namespace__, ns)
-    else:
-        # items might be acquisition wrapped
-        base = aq_base(ob)
-        # item might be proxied (e.g. modules might have a deprecation
-        # proxy)
-        base = removeAllProxies(base)
-        if callable(base):
-            try:
-                if getattr(base, 'isDocTemp', 0):
-                    ob = ZRPythonExpr.call_with_ns(ob, ns, 2)
-                else:
-                    ob = ob()
-            except AttributeError, n:
-                if str(n) != '__call__':
-                    raise
-    return ob
 
 
 class BoboAwareZopeTraverse(object):
@@ -110,14 +128,17 @@ class BoboAwareZopeTraverse(object):
 
         return base
 
-    def __call__(self, base, request, call, *path_items):
-        base = self.traverse(base, request, path_items)
+    def __call__(self, base, econtext, call, path_items):
+        request = econtext.get('request')
+
+        if path_items:
+            base = self.traverse(base, request, path_items)
 
         if call is False:
             return base
 
         if getattr(base, '__call__', _marker) is not _marker or callable(base):
-            base = render(base, request)
+            base = render(base, econtext)
 
         return base
 
@@ -127,7 +148,9 @@ class TrustedBoboAwareZopeTraverse(BoboAwareZopeTraverse):
 
     __slots__ = ()
 
-    def __call__(self, base, request, call, *path_items):
+    def __call__(self, base, econtext, call, path_items):
+        request = econtext.get('request')
+
         base = self.traverse(base, request, path_items)
 
         if call is False:
@@ -160,28 +183,6 @@ class NocallExpr(expressions.NocallExpr, PathExpr):
 
 class ExistsExpr(expressions.ExistsExpr):
     exceptions = zope2_exceptions
-
-
-class ContentProviderTraverser(object):
-    def __call__(self, context, request, view, name):
-        cp = component.queryMultiAdapter(
-            (context, request, view), IContentProvider, name=name)
-
-        # provide a useful error message, if the provider was not found.
-        if cp is None:
-            raise ContentProviderLookupError(name)
-
-        if AQ_WRAP_CP and getattr(cp, '__of__', None) is not None:
-            cp = cp.__of__(context)
-
-        cp.update()
-        return cp.render()
-
-
-class ProviderExpr(expressions.ProviderExpr):
-    traverser = Static(
-        template("cls()", cls=Symbol(ContentProviderTraverser), mode="eval")
-        )
 
 
 class RestrictionTransform(NodeTransformer):

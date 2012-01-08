@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.2.0'
+version = '2.2.1'
 
 setup(name='five.pt',
       version=version,
@@ -26,7 +26,7 @@ setup(name='five.pt',
       install_requires=[
           'setuptools',
           'sourcecodegen>=0.6.14',
-          'z3c.pt>=2.1.4',
+          'z3c.pt>=2.2',
           'zope.pagetemplate>=3.6.2',
       ],
       entry_points="""
