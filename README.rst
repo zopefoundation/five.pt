@@ -1,8 +1,8 @@
 Overview
 ========
 
-This package brings the Chameleon template engine to the Zope 2
-platform. Five is supported.
+This package brings the Chameleon template engine to the Zope application
+server.
 
 It works using monkey-patching onto the existing API (specifically,
 the ``TALInterpreter`` and ``PageTemplate`` classes). In simple terms,
