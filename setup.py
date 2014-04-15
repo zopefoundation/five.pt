@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-__version__ = '2.2.2dev0'
+__version__ = '2.2.2'
 
 setup(
     name='five.pt',

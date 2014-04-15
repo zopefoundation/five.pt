@@ -1,13 +1,7 @@
 Changelog
 =========
 
-2.2.3 (unreleased)
-------------------
-
-- Nothing changed yet.
-
-
-2.2.2 (2014-04-15)
+2.2.2 (unreleased)
 ------------------
 
 - Fix test.
