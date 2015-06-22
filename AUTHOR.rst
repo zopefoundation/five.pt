@@ -1,3 +1,4 @@
-Hanno Schlichting <hanno@hannosch.eu>
-Malthe Borch <mborch@gmail.com>
-Sylvain Viollon <sylvain@infrae.com>
+ - Hanno Schlichting <hanno@hannosch.eu>
+ - Malthe Borch <mborch@gmail.com>
+ - Sylvain Viollon <sylvain@infrae.com>
+ - Tom Gross <itconsense@gmail.com>
