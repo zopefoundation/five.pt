@@ -1,6 +1,6 @@
 bin
 build
-develop-eggs
+develop*
 dist
 lib
 include

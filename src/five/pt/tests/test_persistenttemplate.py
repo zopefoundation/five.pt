@@ -166,7 +166,7 @@ class TestPersistent(ZopeTestCase):
     def test_repeat_object_security(self):
         template = self._makeOne('foo', repeat_object)
         # this should not raise an Unauthorized error
-        self.assertEquals(template().strip().split(), u'0 1 2'.split())
+        self.assertEquals(template().strip(), u'012')
         # XXX-leorochael: the rest of this test is not actually
         # testing the security access, but I couldn't find a simpler
         # way to test if the RepeatItem instance itself allows public
@@ -197,7 +197,7 @@ class TestPersistent(ZopeTestCase):
         template.filename = 'some/random/path'
         # this should still work, without trying to open some random
         # file on the filesystem
-        self.assertEqual(template().strip().split(), u'0 1 2'.split())
+        self.assertEqual(template().strip(), u'012')
 
     def test_edit_with_errors(self):
         from zope.pagetemplate.pagetemplate import _error_start

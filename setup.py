@@ -11,6 +11,7 @@ setup(
     classifiers=[
         "Framework :: Zope2",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
         "Topic :: Text Processing :: Markup :: HTML",
         "Topic :: Text Processing :: Markup :: XML",
     ],
@@ -29,6 +30,7 @@ setup(
         'sourcecodegen>=0.6.14',
         'z3c.pt>=2.2',
         'zope.pagetemplate>=3.6.2',
+        'Chameleon>=2.14',
     ],
     entry_points="""
     [z3c.autoinclude.plugin]
