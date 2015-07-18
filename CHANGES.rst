@@ -4,20 +4,18 @@ Changelog
 2.2.3 (unreleased)
 ~~~~~~~~~~~~~~~~~~
 
-- Nothing changed yet.
+- Add version to setup.py to make zest.releaser happy.
+  [timo]
+
+- Compatibility with Chameleon >= 2.14
+  [tomgross]
 
 
 2.2.2 (2014-04-15)
 ~~~~~~~~~~~~~~~~~~
 
-- Add version to setup.py to make zest.releaser happy.
-  [timo]
-
 - Fix test.
   [davisagli]
-
-- Compatibility with Chameleon >= 2.14
-  [tomgross]
 
 
 2.2.1 (2012-01-08)
