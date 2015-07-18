@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2.3 (unreleased)
+2.2.3 (2015-07-18)
 ~~~~~~~~~~~~~~~~~~
 
 - Add version to setup.py to make zest.releaser happy.
