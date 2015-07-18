@@ -4,6 +4,9 @@ Changelog
 2.2.2 (2014-04-15)
 ~~~~~~~~~~~~~~~~~~
 
+- Add version to setup.py to make zest.releaser happy.
+  [timo]
+
 - Fix test.
   [davisagli]
 
