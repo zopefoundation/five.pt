@@ -19,7 +19,7 @@ setup(
     keywords='',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    url='http://pypi.python.org/pypi/five.pt',
+    url='https://pypi.python.org/pypi/five.pt',
     license='ZPL',
     namespace_packages=['five'],
     packages=find_packages('src'),
