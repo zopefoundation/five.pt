@@ -5,7 +5,9 @@ the pagetemplate base class (which produces the input for the TAL
 interpreter).
 """
 
+import re
 import sys
+import logging
 
 from zope.tal.talinterpreter import TALInterpreter
 from zope.interface import implements
@@ -43,6 +45,9 @@ RepeatDict.security.declareObjectPublic()
 RepeatDict.__allow_access_to_unprotected_subobjects__ = True
 
 InitializeClass(RepeatDict)
+
+re_match_pi = re.compile(r'<\?python([^\w].*?)\?>', re.DOTALL)
+logger = logging.getLogger('five.pt')
 
 
 class Program(object):
@@ -95,6 +100,24 @@ class Program(object):
     @classmethod
     def cook(cls, source_file, text, engine, content_type):
         if engine is getEngine():
+            def sanitize(m):
+                match = m.group(1)
+                logger.info(
+                    'skipped "<?python%s?>" code block in '
+                    'Zope 2 page template object "%s".',
+                    match, source_file
+                )
+                return ''
+
+            text, count = re_match_pi.subn(sanitize, text)
+            if count:
+                logger.warning(
+                    "skipped %d code block%s (not allowed in "
+                    "restricted evaluation scope)." % (
+                        count, 's' if count > 1 else ''
+                    )
+                )
+
             expression_types = cls.secure_expression_types
         else:
             expression_types = cls.expression_types

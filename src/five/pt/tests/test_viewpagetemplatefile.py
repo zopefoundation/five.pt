@@ -10,6 +10,10 @@ class SimpleView(BrowserView):
     index = ViewPageTemplateFile('simple.pt')
 
 
+class ProcessingInstructionTestView(BrowserView):
+    index = ViewPageTemplateFile('pi.pt')
+
+
 class LocalsView(BrowserView):
     def available(self):
         return 'yes'
@@ -94,6 +98,10 @@ class TestPageTemplateFile(ZopeTestCase):
         del request.other["LANGUAGE"]
 
         self.failUnless('<span></span>' in result)
+
+    def test_processing_instruction(self):
+        view = ProcessingInstructionTestView(self.folder, self.folder.REQUEST)
+        self.assertRaises(ZeroDivisionError, view.index)
 
 
 def test_suite():

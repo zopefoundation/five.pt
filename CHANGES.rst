@@ -4,7 +4,9 @@ Changelog
 2.2.4 (unreleased)
 ~~~~~~~~~~~~~~~~~~
 
-- Nothing changed yet.
+- Skip processing instruction code blocks in templates that use
+  the restricted evaluation engine.
+  [mauritsvanrees]
 
 
 2.2.3 (2015-07-18)
