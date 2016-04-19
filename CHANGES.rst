@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2.4 (unreleased)
+2.2.4 (2016-04-19)
 ~~~~~~~~~~~~~~~~~~
 
 - Skip processing instruction code blocks in templates that use
