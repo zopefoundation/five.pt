@@ -200,14 +200,15 @@ class TestPersistent(ZopeTestCase):
         self.assertEqual(template().strip(), u'012')
 
     def test_edit_with_errors(self):
-        from zope.pagetemplate.pagetemplate import _error_start
         template = self._makeOne('foo', simple_error)
         # this should not raise:
         editable_text = get_editable_content(template)
         # and the errors should be in an xml comment at the start of
         # the editable text
         error_prefix = cgi.escape(
-            '%s\n %s\n-->\n' % (_error_start, '\n '.join(template._v_errors))
+            '<!-- Page Template Diagnostics\n {0}\n-->\n'.format(
+                '\n '.join(template._v_errors)
+            )
         )
         self.assertTrue(editable_text.startswith(error_prefix))
 

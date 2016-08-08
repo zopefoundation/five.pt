@@ -3,7 +3,9 @@ Changelog
 
 In next release ...
 
-- ...
+- Fix ``test_edit_with_errors`` to not import a private variable from
+  ``zope.pagetemplate``. Fixes test failure with latest zope.pagetemplate.
+  [thet]
 
 
 2.2.4 (2016-04-19)
