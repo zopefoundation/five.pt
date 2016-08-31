@@ -19,4 +19,4 @@ To enable Chameleon, configure the package using ZCML::
 
   <include package="five.pt" />
 
-For more information on Chameleon, see http://www.pagetemplates.org/.
+For more information on Chameleon, see http://chameleon.readthedocs.io/en/latest/.
