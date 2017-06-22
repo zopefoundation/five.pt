@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.2.5-dev'
+version = '2.2.5.dev0'
 __version__ = version
 
 setup(
