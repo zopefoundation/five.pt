@@ -1,7 +1,8 @@
 Changelog
 =========
 
-In next release ...
+2.2.5 (2017-11-26)
+~~~~~~~~~~~~~~~~~~
 
 - Fix ``test_edit_with_errors`` to not import a private variable from
   ``zope.pagetemplate``. Fixes test failure with latest zope.pagetemplate.
