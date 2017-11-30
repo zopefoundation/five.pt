@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0 (unreleased)
+3.0 (2017-11-30)
 ~~~~~~~~~~~~~~~~
 
 - Mark as deprecated. This package is no longer needed with ``Zope >= 4`` as

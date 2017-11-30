@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='five.pt',
-    version='3.0.dev0',
+    version='3.0',
     description="DEPRECATED: Five bridges and patches to use Chameleon with"
                 " Zope.",
     long_description=(open("README.rst").read() + "\n" +
