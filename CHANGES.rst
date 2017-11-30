@@ -1,20 +1,11 @@
 Changelog
 =========
 
-2.2.6 (unreleased)
-~~~~~~~~~~~~~~~~~~
+3.0 (unreleased)
+~~~~~~~~~~~~~~~~
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
+- Mark as deprecated. This package is no longer needed with ``Zope >= 4`` as
+  its code got included in ``Zope``.
 
 
 2.2.5 (2017-11-26)
@@ -22,7 +13,6 @@ Bug fixes:
 
 - Fix ``test_edit_with_errors`` to not import a private variable from
   ``zope.pagetemplate``. Fixes test failure with latest zope.pagetemplate.
-  [thet]
 
 
 2.2.4 (2016-04-19)

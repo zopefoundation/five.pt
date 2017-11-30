@@ -1,25 +1,28 @@
 from setuptools import setup, find_packages
 
-version = '2.2.6.dev0'
-__version__ = version
 
 setup(
     name='five.pt',
-    version=__version__,
-    description="Five bridges and patches to use Chameleon with Zope.",
+    version='3.0.dev0',
+    description="DEPRECATED: Five bridges and patches to use Chameleon with"
+                " Zope.",
     long_description=(open("README.rst").read() + "\n" +
                       open("CHANGES.rst").read()),
     classifiers=[
-        "Framework :: Zope2",
+        "Development Status :: 7 - Inactive",
+        "Framework :: Zope :: 4",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Text Processing :: Markup :: HTML",
         "Topic :: Text Processing :: Markup :: XML",
     ],
     keywords='',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
-    url='https://pypi.python.org/pypi/five.pt',
+    url='https://github.com/zopefoundation/five.pt',
     license='ZPL',
     namespace_packages=['five'],
     packages=find_packages('src'),
@@ -28,13 +31,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'sourcecodegen>=0.6.14',
-        'z3c.pt>=2.2',
-        'zope.pagetemplate>=3.6.2',
-        'Chameleon>=2.14',
+        'Zope2 >= 4.0a2',
     ],
-    entry_points="""
-    [z3c.autoinclude.plugin]
-    target = plone
-    """,
 )
