@@ -20,7 +20,7 @@ setup(
         "Topic :: Text Processing :: Markup :: HTML",
         "Topic :: Text Processing :: Markup :: XML",
     ],
-    keywords='',
+    keywords='page templates chameleon zope',
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     url='https://github.com/zopefoundation/five.pt',
